@@ -290,6 +290,12 @@ button:active { opacity: 0.8; }
 }
 .btn-export:hover { background: #e0004b; }
 
+.btn-png {
+    background: var(--ob-blue);
+    color: #fff;
+}
+.btn-png:hover { background: var(--ob-blue-hover); }
+
 .btn-icon {
     width: 28px;
     height: 28px;

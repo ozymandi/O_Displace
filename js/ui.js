@@ -1,7 +1,7 @@
 import { parseASE } from './palette.js';
 import { getSeed } from './prng.js';
 import { generatePattern } from './engine.js';
-import { exportSVG } from './export.js';
+import { exportSVG, exportPNG } from './export.js';
 
 // --- Logging ---
 export function log(msg) {
@@ -165,11 +165,18 @@ export function bindASEImport() {
     });
 }
 
-// --- Export button ---
+// --- Export buttons ---
 export function bindExport() {
-    document.getElementById('btnExport').addEventListener('click', () => {
+    document.getElementById('btnExportSVG').addEventListener('click', () => {
         const ok = exportSVG(getSeed());
-        if (ok) log(`SVG exported: odisplace_${getSeed()}.svg`);
+        if (ok) log(`SVG saved: odisplace_${getSeed()}.svg`);
         else log('Export failed: no SVG rendered.');
+    });
+
+    document.getElementById('btnExportPNG').addEventListener('click', async () => {
+        log('Rendering PNG…');
+        const ok = await exportPNG(getSeed());
+        if (ok) log(`PNG saved: odisplace_${getSeed()}.png`);
+        else log('PNG export failed.');
     });
 }
