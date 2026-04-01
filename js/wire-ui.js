@@ -43,6 +43,7 @@ export function collectWireParams(createNewSeed = false) {
         stepDirections:  modeVal('stepDirections'),
         symmetry:        modeVal('symmetry'),
         radialSteps:     Math.max(2, parseInt(val('radialSteps'))),
+        lineCap:         modeVal('lineCap'),
     };
 }
 
@@ -174,6 +175,7 @@ const MODE_DEFAULTS = {
     widthMode: 'random',
     stepDirections: 'any',
     symmetry: 'none',
+    lineCap: 'none',
 };
 
 export function resetDefaults() {

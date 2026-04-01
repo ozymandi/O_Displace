@@ -15,6 +15,30 @@ function tile(shape) {
         .join('') + shape;
 }
 
+/** Draw a decorative end cap at point (x, y) */
+function drawEndCap(x, y, color, sw, type) {
+    const r = Math.max(3, sw * 2.5);
+    switch (type) {
+        case 'circle':
+            return `<circle cx="${x}" cy="${y}" r="${r}" fill="${color}"/>`;
+        case 'square':
+            return `<rect x="${x - r}" y="${y - r}" width="${r * 2}" height="${r * 2}" fill="${color}"/>`;
+        case 'circle-outline':
+            return `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}"/>`;
+        case 'square-outline':
+            return `<rect x="${x - r}" y="${y - r}" width="${r * 2}" height="${r * 2}" fill="none" stroke="${color}" stroke-width="${sw}"/>`;
+        case 'cross': {
+            const a = r * 1.2;
+            return `<line x1="${x - a}" y1="${y}" x2="${x + a}" y2="${y}" stroke="${color}" stroke-width="${sw}" stroke-linecap="square"/>`
+                 + `<line x1="${x}" y1="${y - a}" x2="${x}" y2="${y + a}" stroke="${color}" stroke-width="${sw}" stroke-linecap="square"/>`;
+        }
+        case 'diamond':
+            return `<polygon points="${x},${y - r} ${x + r},${y} ${x},${y + r} ${x - r},${y}" fill="${color}"/>`;
+        default:
+            return '';
+    }
+}
+
 /** Apply symmetry copies around canvas center */
 function symmetrize(shape, symmetry, radialSteps) {
     switch (symmetry) {
@@ -192,7 +216,10 @@ function buildContent(p) {
                 }
             }
 
-            const baseShape = `<polyline points="${pts.join(' ')}" stroke="${strokeColor}" stroke-width="${strokeWidth}" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>`;
+            const lastPt = pts[pts.length - 1].split(',');
+            const ex = parseFloat(lastPt[0]), ey = parseFloat(lastPt[1]);
+            const cap = p.lineCap !== 'none' ? drawEndCap(ex, ey, strokeColor, strokeWidth, p.lineCap) : '';
+            const baseShape = `<polyline points="${pts.join(' ')}" stroke="${strokeColor}" stroke-width="${strokeWidth}" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>${cap}`;
             const shape = symmetrize(baseShape, p.symmetry, p.radialSteps);
             parts.push(p.seamless ? tile(shape) : shape);
         }
