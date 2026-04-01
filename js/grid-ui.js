@@ -55,6 +55,7 @@ export function collectGridParams(createNewSeed = false) {
         borderWidth:          Math.max(0.5, val('borderWidth')),
         borderWidthRandom:    val('borderWidthRandom'),
 
+        cornerAll:            modeVal('cornerAll'),
         cornerTL:             modeVal('cornerTL'),
         cornerTR:             modeVal('cornerTR'),
         cornerBR:             modeVal('cornerBR'),
@@ -149,12 +150,8 @@ export function updateBorderVis() {
 
 export function updateCornerVis() {
     const isHex = modeVal('gridType').startsWith('hex');
-    const cornerSection = document.getElementById('cornerSection');
-    const cornerFigSection = document.getElementById('cornerFigSection');
-    const innerGridSection = document.getElementById('innerGridSection');
-    cornerSection.style.display = isHex ? 'none' : '';
-    cornerFigSection.style.display = isHex ? 'none' : '';
-    innerGridSection.style.display = isHex ? 'none' : '';
+    document.getElementById('cornerRectGrid').style.display = isHex ? 'none' : '';
+    document.getElementById('cornerHexGroup').style.display = isHex ? '' : 'none';
 }
 
 export function updateTextVis() {
@@ -332,6 +329,7 @@ const MODE_DEFAULTS = {
     gridType:    'grid',
     fillMode:    'mono',
     borderMode:  'mono',
+    cornerAll:   'sharp',
     cornerTL:    'sharp',
     cornerTR:    'sharp',
     cornerBR:    'sharp',

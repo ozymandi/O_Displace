@@ -104,13 +104,11 @@ function buildRectPath(x, y, w, h, corners, radius) {
     return d + ' Z';
 }
 
-/** Build SVG polygon path for a hexagon. */
-function buildHexPath(cx, cy, w, h, orientation) {
-    let pts;
+/** Return the 6 vertex points of a hexagon. */
+function hexPts(cx, cy, w, h, orientation) {
     if (orientation === 'row') {
-        // Pointy-top
         const rx = w / 2, ry = h / 2, qy = h / 4;
-        pts = [
+        return [
             [cx,      cy - ry],
             [cx + rx, cy - qy],
             [cx + rx, cy + qy],
@@ -119,9 +117,8 @@ function buildHexPath(cx, cy, w, h, orientation) {
             [cx - rx, cy - qy],
         ];
     } else {
-        // Flat-top
         const rx = w / 2, ry = h / 2, qx = w / 4;
-        pts = [
+        return [
             [cx + rx, cy],
             [cx + qx, cy - ry],
             [cx - qx, cy - ry],
@@ -130,7 +127,35 @@ function buildHexPath(cx, cy, w, h, orientation) {
             [cx + qx, cy + ry],
         ];
     }
-    return 'M ' + pts.map(p => `${p[0].toFixed(2)},${p[1].toFixed(2)}`).join(' L ') + ' Z';
+}
+
+/** Build SVG path for a hexagon with optional corner treatment. */
+function buildHexPath(cx, cy, w, h, orientation, cornerType = 'sharp', r = 0) {
+    const pts = hexPts(cx, cy, w, h, orientation);
+    if (cornerType === 'sharp' || r <= 0) {
+        return 'M ' + pts.map(p => `${p[0].toFixed(2)},${p[1].toFixed(2)}`).join(' L ') + ' Z';
+    }
+    const n = pts.length;
+    let d = '';
+    for (let i = 0; i < n; i++) {
+        const prev = pts[(i - 1 + n) % n];
+        const curr = pts[i];
+        const next = pts[(i + 1) % n];
+        const d1x = prev[0] - curr[0], d1y = prev[1] - curr[1];
+        const len1 = Math.sqrt(d1x * d1x + d1y * d1y);
+        const d2x = next[0] - curr[0], d2y = next[1] - curr[1];
+        const len2 = Math.sqrt(d2x * d2x + d2y * d2y);
+        const rC = Math.min(r, len1 / 2, len2 / 2);
+        const p1x = curr[0] + d1x / len1 * rC, p1y = curr[1] + d1y / len1 * rC;
+        const p2x = curr[0] + d2x / len2 * rC, p2y = curr[1] + d2y / len2 * rC;
+        d += i === 0 ? `M ${p1x.toFixed(2)} ${p1y.toFixed(2)}` : ` L ${p1x.toFixed(2)} ${p1y.toFixed(2)}`;
+        if (cornerType === 'round') {
+            d += ` Q ${curr[0].toFixed(2)} ${curr[1].toFixed(2)} ${p2x.toFixed(2)} ${p2y.toFixed(2)}`;
+        } else {
+            d += ` L ${p2x.toFixed(2)} ${p2y.toFixed(2)}`;
+        }
+    }
+    return d + ' Z';
 }
 
 /** Compute cell layout array from params. */
@@ -212,12 +237,12 @@ function renderCell(cell, p, bgColor, ctr) {
         : 0;
 
     // Cell shape
+    const cornerR = vary(p.cornerRadius, p.cornerRadiusRandom);
     let pathD;
     if (isHex) {
-        pathD = buildHexPath(cx, cy, w, h, hexOri);
+        pathD = buildHexPath(cx, cy, w, h, hexOri, p.cornerAll || 'sharp', cornerR);
     } else {
-        const r = vary(p.cornerRadius, p.cornerRadiusRandom);
-        pathD = buildRectPath(x, y, w, h, [p.cornerTL, p.cornerTR, p.cornerBR, p.cornerBL], r);
+        pathD = buildRectPath(x, y, w, h, [p.cornerTL, p.cornerTR, p.cornerBR, p.cornerBL], cornerR);
     }
 
     const strokeAttr = borderColor !== 'none' && borderWidth > 0
@@ -225,10 +250,12 @@ function renderCell(cell, p, bgColor, ctr) {
         : '';
     parts.push(`<path d="${pathD}" fill="${fillColor}"${strokeAttr}/>`);
 
-    // Corner figures (rect cells only)
-    if (!isHex && p.cornerFigEnable) {
+    // Corner figures (rect: 4 corners, hex: 6 vertices)
+    if (p.cornerFigEnable) {
         const figR = Math.max(0.5, vary(p.borderWidth * p.cornerFigMult, p.cornerFigRandom));
-        const corners = [[x, y], [x + w, y], [x + w, y + h], [x, y + h]];
+        const corners = isHex
+            ? hexPts(cx, cy, w, h, hexOri)
+            : [[x, y], [x + w, y], [x + w, y + h], [x, y + h]];
         // fallback: border → fill → light gray
         const figFill = borderColor !== 'none' ? borderColor
             : fillColor !== 'none' ? fillColor : toGray(180);
@@ -261,8 +288,8 @@ function renderCell(cell, p, bgColor, ctr) {
         }
     }
 
-    // Inner grid (rect cells only) — clipped to cell shape including rounded/chamfer corners
-    if (!isHex && p.innerGridEnable && (p.innerGridX > 0 || p.innerGridY > 0)) {
+    // Inner grid (hex + rect) — clipped to cell shape via clipPath
+    if (p.innerGridEnable && (p.innerGridX > 0 || p.innerGridY > 0)) {
         const igW = Math.max(0.3, vary(p.borderWidth * p.innerGridThickMult, p.innerGridThickRandom));
         const igOp = Math.min(1, Math.max(0, vary(p.innerGridOpacity, p.innerGridOpacityRandom)));
         const igColor = borderColor !== 'none' ? borderColor : (fillColor !== 'none' ? toGray(128) : toGray(128));

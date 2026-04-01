@@ -206,47 +206,61 @@
     </div>
 
     <!-- Corners -->
-    <div class="module-group" id="cornerSection">
+    <div class="module-group">
         <div class="module-header">
             <div class="module-title">
                 <svg viewBox="0 0 24 24"><path d="M3 9V5a2 2 0 0 1 2-2h4M15 3h4a2 2 0 0 1 2 2v4M21 15v4a2 2 0 0 1-2 2h-4M9 21H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
                 Corners
             </div>
         </div>
-        <div class="corner-grid">
-            <div class="corner-item">
-                <span class="corner-label">Top-left</span>
-                <div class="seg-group" data-param="cornerTL">
-                    <button class="seg-btn active" data-value="sharp" title="Sharp">S</button>
-                    <button class="seg-btn" data-value="round" title="Round">R</button>
-                    <button class="seg-btn" data-value="chamfer" title="Chamfer">C</button>
+
+        <!-- Rect: per-corner type -->
+        <div id="cornerRectGrid">
+            <div class="corner-grid">
+                <div class="corner-item">
+                    <span class="corner-label">Top-left</span>
+                    <div class="seg-group" data-param="cornerTL">
+                        <button class="seg-btn active" data-value="sharp" title="Sharp">S</button>
+                        <button class="seg-btn" data-value="round" title="Round">R</button>
+                        <button class="seg-btn" data-value="chamfer" title="Chamfer">C</button>
+                    </div>
                 </div>
-            </div>
-            <div class="corner-item">
-                <span class="corner-label">Top-right</span>
-                <div class="seg-group" data-param="cornerTR">
-                    <button class="seg-btn active" data-value="sharp" title="Sharp">S</button>
-                    <button class="seg-btn" data-value="round" title="Round">R</button>
-                    <button class="seg-btn" data-value="chamfer" title="Chamfer">C</button>
+                <div class="corner-item">
+                    <span class="corner-label">Top-right</span>
+                    <div class="seg-group" data-param="cornerTR">
+                        <button class="seg-btn active" data-value="sharp" title="Sharp">S</button>
+                        <button class="seg-btn" data-value="round" title="Round">R</button>
+                        <button class="seg-btn" data-value="chamfer" title="Chamfer">C</button>
+                    </div>
                 </div>
-            </div>
-            <div class="corner-item">
-                <span class="corner-label">Bottom-left</span>
-                <div class="seg-group" data-param="cornerBL">
-                    <button class="seg-btn active" data-value="sharp" title="Sharp">S</button>
-                    <button class="seg-btn" data-value="round" title="Round">R</button>
-                    <button class="seg-btn" data-value="chamfer" title="Chamfer">C</button>
+                <div class="corner-item">
+                    <span class="corner-label">Bottom-left</span>
+                    <div class="seg-group" data-param="cornerBL">
+                        <button class="seg-btn active" data-value="sharp" title="Sharp">S</button>
+                        <button class="seg-btn" data-value="round" title="Round">R</button>
+                        <button class="seg-btn" data-value="chamfer" title="Chamfer">C</button>
+                    </div>
                 </div>
-            </div>
-            <div class="corner-item">
-                <span class="corner-label">Bottom-right</span>
-                <div class="seg-group" data-param="cornerBR">
-                    <button class="seg-btn active" data-value="sharp" title="Sharp">S</button>
-                    <button class="seg-btn" data-value="round" title="Round">R</button>
-                    <button class="seg-btn" data-value="chamfer" title="Chamfer">C</button>
+                <div class="corner-item">
+                    <span class="corner-label">Bottom-right</span>
+                    <div class="seg-group" data-param="cornerBR">
+                        <button class="seg-btn active" data-value="sharp" title="Sharp">S</button>
+                        <button class="seg-btn" data-value="round" title="Round">R</button>
+                        <button class="seg-btn" data-value="chamfer" title="Chamfer">C</button>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Hex: single type for all 6 vertices -->
+        <div id="cornerHexGroup" style="display:none">
+            <div class="seg-group" data-param="cornerAll">
+                <button class="seg-btn active" data-value="sharp">Sharp</button>
+                <button class="seg-btn" data-value="round">Round</button>
+                <button class="seg-btn" data-value="chamfer">Chamfer</button>
+            </div>
+        </div>
+
         <div class="row"><label>Radius</label>        <input type="range" id="cornerRadius" min="0" max="80" value="0" oninput="handleInput()"></div>
         <div class="row"><label>Radius random</label> <input type="range" id="cornerRadiusRandom" min="0" max="2" step="0.05" value="0" oninput="handleInput()"></div>
     </div>
