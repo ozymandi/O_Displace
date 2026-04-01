@@ -32,6 +32,18 @@ const DIRS = {
     any:      [[1, 0], [-1, 0], [0, 1], [0, -1], [1, 1], [-1, 1], [1, -1], [-1, -1]],
 };
 
+const INV_SQRT2 = 1 / Math.sqrt(2);
+const DIRS_45 = [
+    [1, 0], [INV_SQRT2, INV_SQRT2], [0, 1], [-INV_SQRT2, INV_SQRT2],
+    [-1, 0], [-INV_SQRT2, -INV_SQRT2], [0, -1], [INV_SQRT2, -INV_SQRT2],
+];
+
+/** Snap a continuous angle to the nearest 45° direction vector */
+function snapDir(angle) {
+    const idx = Math.round(angle / (Math.PI / 4)) & 7;
+    return DIRS_45[idx];
+}
+
 /** Returns a 0–1 value based on layer index and mode. Calls random() only for 'random' mode. */
 function computeT(idx, total, mode) {
     const t = total <= 1 ? 0.5 : idx / (total - 1);
@@ -128,12 +140,8 @@ function buildContent(p) {
             } else if (p.stepDirections === 'conical') {
                 const dx = ox - W / 2, dy = oy - H / 2;
                 const len = Math.sqrt(dx * dx + dy * dy);
-                if (len < 1) {
-                    const a = random() * Math.PI * 2;
-                    dir = [Math.cos(a), Math.sin(a)];
-                } else {
-                    dir = [dx / len, dy / len];
-                }
+                const rawAngle = len < 1 ? random() * Math.PI * 2 : Math.atan2(dy, dx);
+                dir = snapDir(rawAngle);
             } else {
                 dir = dirPool[Math.floor(random() * dirPool.length)];
             }
@@ -151,9 +159,10 @@ function buildContent(p) {
                     const a = Math.atan2(dir[1], dir[0]) + (random() - 0.5) * 0.3;
                     dir = [Math.cos(a), Math.sin(a)];
                 } else if (p.stepDirections === 'conical') {
-                    const drift = (random() - 0.5) * 0.45;
-                    const a = Math.atan2(dir[1], dir[0]) + drift;
-                    dir = [Math.cos(a), Math.sin(a)];
+                    // Stay same or turn ±45°
+                    const turn = Math.floor(random() * 3) - 1; // -1, 0, +1
+                    const a = Math.atan2(dir[1], dir[0]) + turn * (Math.PI / 4);
+                    dir = snapDir(a);
                 } else if (random() > 0.35) {
                     dir = dirPool[Math.floor(random() * dirPool.length)];
                 }
