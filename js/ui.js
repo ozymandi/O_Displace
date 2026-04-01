@@ -165,6 +165,32 @@ export function bindASEImport() {
     });
 }
 
+// --- Reset to defaults ---
+const DEFAULTS = {
+    globalIter: 1500, bgBrightness: 30,
+    renderMode: 'color', paletteSelect: 'grayscale',
+    livePreview: true,
+    matrixEnable: true,  matrixSize: 4, matrixStart: -50, matrixEnd: 50, matrixRandom: 15, matrixInvert: false,
+    solidEnable: true,   solidScale: 80,
+    alphaEnable: true,   alphaScale: 100, alphaOpacity: 50,
+    gridEnable: true,    gridScale: 40, gridSpacing: 20, gridAmount: 5,
+    vBarEnable: true,    vBarScale: 60, vBarSpacing: 30, vBarAmount: 6,
+    hBarEnable: true,    hBarScale: 60, hBarSpacing: 30, hBarAmount: 6,
+    wireEnable: true,    wireWidth: 4, crossProb: 30, nodeAmount: 3, nodeSpacing: 10, wireCenter: 30,
+};
+
+export function resetDefaults() {
+    for (const [id, value] of Object.entries(DEFAULTS)) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        if (el.type === 'checkbox') el.checked = value;
+        else el.value = value;
+    }
+    handlePaletteChange();
+    handleInput();
+    log('Settings reset to defaults.');
+}
+
 // --- Export buttons ---
 export function bindExport() {
     document.getElementById('btnExportSVG').addEventListener('click', () => {
