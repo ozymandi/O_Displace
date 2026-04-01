@@ -95,13 +95,21 @@ body {
 .back-btn svg { flex-shrink: 0; }
 
 .panel-title {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: var(--ob-title-weight);
     color: var(--ob-ink);
-    letter-spacing: -0.2px;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--ob-line);
     margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.panel-title .back-btn {
+    padding: 0;
+    color: var(--ob-muted);
+    flex-shrink: 0;
 }
 
 /* ─── Layout: Viewport ─────────────────────────────────────────────────────── */
