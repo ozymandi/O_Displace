@@ -372,12 +372,13 @@ button:active { opacity: 0.8; }
 }
 .select-row select { flex: 1; }
 
-/* ─── Action buttons row ────────────────────────────────────────────────────── */
-.action-row {
-    display: flex;
+/* ─── Action buttons (2×2 grid, equal size) ────────────────────────────────── */
+.actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
 }
-.action-row button { flex: 1; height: 32px; }
+.actions-grid button { height: 32px; width: 100%; }
 
 /* ─── PNG scale popup ───────────────────────────────────────────────────────── */
 .png-popup {
