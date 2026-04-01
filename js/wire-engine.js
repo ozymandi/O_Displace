@@ -68,13 +68,18 @@ function symmetrize(shape, symmetry, radialSteps) {
 const NORMAL_MAP_FILTER = `
 <filter id="normalMapFilter" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="linearRGB">
     <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.33 0.33 0.33 0 0" result="gray" />
-    <feGaussianBlur in="gray" stdDeviation="6" result="hMap" />
-    <feConvolveMatrix in="hMap" order="3" kernelMatrix="-1 0 1  -2 0 2  -1 0 1" divisor="2" result="dx" preserveAlpha="true"/>
-    <feConvolveMatrix in="hMap" order="3" kernelMatrix="-1 -2 -1  0 0 0  1 2 1" divisor="2" result="dy" preserveAlpha="true"/>
-    <feColorMatrix in="dx" type="matrix" values="0 0 0 1 0.5  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="rChannel" />
-    <feColorMatrix in="dy" type="matrix" values="0 0 0 0 0  0 0 0 1 0.5  0 0 0 0 0  0 0 0 0 1" result="gChannel" />
-    <feComposite in="rChannel" in2="gChannel" operator="arithmetic" k2="1" k3="1" result="rgChannels" />
-    <feColorMatrix in="rgChannels" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 0 0 1  0 0 0 1 0" />
+    <feGaussianBlur in="gray" stdDeviation="1.5" result="hMap" />
+    <feConvolveMatrix in="hMap" order="3" kernelMatrix="-1 0 1  -2 0 2  -1 0 1" divisor="4" bias="0.5" result="nx" preserveAlpha="false"/>
+    <feConvolveMatrix in="hMap" order="3" kernelMatrix="1 2 1  0 0 0  -1 -2 -1" divisor="4" bias="0.5" result="ny" preserveAlpha="false"/>
+    <feBlend in="nx" in2="ny" mode="screen" result="rg" />
+    <feColorMatrix in="rg" type="matrix"
+        values="1 0 0 0 0
+                0 1 0 0 0
+                0 0 0 0 0.5
+                0 0 0 1 0" result="rgB" />
+    <feComponentTransfer in="rgB">
+        <feFuncB type="linear" slope="0" intercept="1"/>
+    </feComponentTransfer>
 </filter>`;
 
 const DIRS = {
