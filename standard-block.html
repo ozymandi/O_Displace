@@ -60,7 +60,7 @@
         Standard Block
     </div>
 
-    <!-- Seed -->
+    <!-- Seed + Seamless -->
     <div class="seed-row">
         <label>Seed</label>
         <input type="text" id="seedDisplay" readonly>
@@ -68,12 +68,10 @@
             <label for="livePreview">Live</label>
             <input type="checkbox" id="livePreview" checked>
         </div>
-    </div>
-
-    <!-- Seamless toggle -->
-    <div class="seed-row">
-        <label for="seamlessEnable">Seamless tile</label>
-        <input type="checkbox" id="seamlessEnable" onchange="handleInput()">
+        <div class="live-wrap">
+            <label for="seamlessEnable">Seamless</label>
+            <input type="checkbox" id="seamlessEnable" onchange="handleInput()">
+        </div>
     </div>
 
     <!-- Render mode -->

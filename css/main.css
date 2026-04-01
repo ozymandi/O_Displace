@@ -98,9 +98,6 @@ body {
     font-size: 14px;
     font-weight: var(--ob-title-weight);
     color: var(--ob-ink);
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--ob-line);
-    margin-bottom: 2px;
     display: flex;
     align-items: center;
     gap: 4px;
@@ -302,16 +299,16 @@ button:hover { background: var(--ob-hover); }
 button:active { opacity: 0.8; }
 
 .btn-generate {
-    background: var(--ob-success);
-    color: #fff;
+    background: var(--ob-panel-2);
+    color: var(--ob-ink);
 }
-.btn-generate:hover { background: #17b370; }
+.btn-generate:hover { background: var(--ob-hover); }
 
 .btn-export {
-    background: var(--ob-accent);
+    background: var(--ob-blue);
     color: #fff;
 }
-.btn-export:hover { background: #e0004b; }
+.btn-export:hover { background: var(--ob-blue-hover); }
 
 .btn-png {
     background: var(--ob-blue);
