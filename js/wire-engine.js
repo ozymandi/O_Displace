@@ -66,11 +66,10 @@ function symmetrize(shape, symmetry, radialSteps) {
 }
 
 const NORMAL_MAP_FILTER = `
-<filter id="normalMapFilter" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="linearRGB">
+<filter id="normalMapFilter" x="0" y="0" width="100%" height="100%" filterUnits="objectBoundingBox" color-interpolation-filters="linearRGB">
     <feColorMatrix in="SourceGraphic" type="matrix" values="0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0 0 0 1 0" result="gray"/>
-    <feGaussianBlur in="gray" stdDeviation="1.5" result="hMap"/>
-    <feConvolveMatrix in="hMap" order="3" kernelMatrix="-1 0 1  -2 0 2  -1 0 1" divisor="4" bias="0.5" result="dx" preserveAlpha="true"/>
-    <feConvolveMatrix in="hMap" order="3" kernelMatrix="1 2 1  0 0 0  -1 -2 -1" divisor="4" bias="0.5" result="dy" preserveAlpha="true"/>
+    <feConvolveMatrix in="gray" order="3" kernelMatrix="-1 0 1  -2 0 2  -1 0 1" divisor="4" bias="0.5" result="dx"/>
+    <feConvolveMatrix in="gray" order="3" kernelMatrix="1 2 1  0 0 0  -1 -2 -1" divisor="4" bias="0.5" result="dy"/>
     <feColorMatrix in="dx" type="matrix" values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="rOnly"/>
     <feColorMatrix in="dy" type="matrix" values="0 0 0 0 0  1 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="gOnly"/>
     <feComposite in="rOnly" in2="gOnly" operator="arithmetic" k2="1" k3="1" result="rg"/>
