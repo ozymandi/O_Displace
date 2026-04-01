@@ -87,6 +87,8 @@ export function collectGridParams(createNewSeed = false) {
         textBgEnable:         checked('textBgEnable'),
         textBorderEnable:     checked('textBorderEnable'),
         textFontSize:         val('textFontSize'),
+        textLineHeight:       val('textLineHeight'),
+        textFont:             document.getElementById('textFont').value,
     };
 }
 
@@ -294,6 +296,7 @@ const DEFAULTS = {
     renderMode: 'color',
     paletteSelect: 'grayscale',
     livePreview: true,
+    textFont: 'courier',
     cellsX: 8,
     cellsY: 8,
     margin: 4,
@@ -322,6 +325,8 @@ const DEFAULTS = {
     textBgEnable: false,
     textBorderEnable: false,
     textFontSize: 1,
+    textLineHeight: 1.35,
+    textFont: 'courier',
 };
 const MODE_DEFAULTS = {
     gridType:    'grid',

@@ -38,6 +38,17 @@ function hexToGray(hex) {
     return toGray(Math.round(0.299 * r + 0.587 * g + 0.114 * b));
 }
 
+const FONT_MAP = {
+    'courier':     "'Courier New', monospace",
+    'consolas':    "Consolas, 'Courier New', monospace",
+    'space-mono':  "'Space Mono', monospace",
+    'share-tech':  "'Share Tech Mono', monospace",
+    'arial':       "Arial, Helvetica, sans-serif",
+    'georgia':     "Georgia, serif",
+    'impact':      "Impact, fantasy",
+    'times':       "'Times New Roman', serif",
+};
+
 function escapeXml(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
@@ -296,7 +307,7 @@ function renderCell(cell, p, bgColor, ctr) {
         const maxFontH = h / (lines.length * 1.35);
         const maxFontW = w / Math.max(1, ...lines.map(l => l.length)) / 0.6;
         const fontSize = Math.max(4, Math.min(maxFontH, maxFontW, w * 0.9)) * (p.textFontSize ?? 1);
-        const lineH = fontSize * 1.35;
+        const lineH = fontSize * (p.textLineHeight ?? 1.35);
         const totalH = lines.length * lineH;
 
         const anchor = p.textAnchor; // 'tl','tc','tr','ml','mc','mr','bl','bc','br'
@@ -331,7 +342,7 @@ function renderCell(cell, p, bgColor, ctr) {
 
         for (let i = 0; i < lines.length; i++) {
             const ty = (baseY + i * lineH).toFixed(2);
-            parts.push(`<text x="${textX.toFixed(2)}" y="${ty}" font-family="'Courier New',monospace" font-size="${fontSize.toFixed(2)}" fill="${textColor}" text-anchor="${svgAnchor}">${escapeXml(lines[i])}</text>`);
+            parts.push(`<text x="${textX.toFixed(2)}" y="${ty}" font-family="${FONT_MAP[p.textFont] ?? FONT_MAP['courier']}" font-size="${fontSize.toFixed(2)}" fill="${textColor}" text-anchor="${svgAnchor}">${escapeXml(lines[i])}</text>`);
         }
     }
 
