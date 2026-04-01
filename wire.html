@@ -173,6 +173,24 @@
         </div>
     </div>
 
+    <!-- Symmetry -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><path d="M12 3v18M3 9l4 3-4 3M21 9l-4 3 4 3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Symmetry
+            </div>
+        </div>
+        <div class="seg-group" data-param="symmetry">
+            <button class="seg-btn active" data-value="none">None</button>
+            <button class="seg-btn" data-value="horizontal">Horizontal</button>
+            <button class="seg-btn" data-value="vertical">Vertical</button>
+            <button class="seg-btn" data-value="both">H + V</button>
+            <button class="seg-btn" data-value="radial">Radial</button>
+        </div>
+        <div class="row"><label>Radial steps</label><input type="range" id="radialSteps" min="2" max="12" value="6" oninput="handleInput()"></div>
+    </div>
+
     <!-- Actions -->
     <div class="actions-grid">
         <button class="btn-generate" onclick="generateNew()">Generate New Seed</button>

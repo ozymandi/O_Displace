@@ -15,6 +15,32 @@ function tile(shape) {
         .join('') + shape;
 }
 
+/** Apply symmetry copies around canvas center */
+function symmetrize(shape, symmetry, radialSteps) {
+    switch (symmetry) {
+        case 'horizontal':
+            return shape + `<g transform="scale(-1,1) translate(-${W},0)">${shape}</g>`;
+        case 'vertical':
+            return shape + `<g transform="scale(1,-1) translate(0,-${H})">${shape}</g>`;
+        case 'both':
+            return shape
+                + `<g transform="scale(-1,1) translate(-${W},0)">${shape}</g>`
+                + `<g transform="scale(1,-1) translate(0,-${H})">${shape}</g>`
+                + `<g transform="scale(-1,-1) translate(-${W},-${H})">${shape}</g>`;
+        case 'radial': {
+            const cx = W / 2, cy = H / 2;
+            let out = shape;
+            for (let i = 1; i < radialSteps; i++) {
+                const deg = (360 / radialSteps) * i;
+                out += `<g transform="rotate(${deg},${cx},${cy})">${shape}</g>`;
+            }
+            return out;
+        }
+        default:
+            return shape;
+    }
+}
+
 const NORMAL_MAP_FILTER = `
 <filter id="normalMapFilter" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="linearRGB">
     <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.33 0.33 0.33 0 0" result="hMap" />
@@ -166,7 +192,8 @@ function buildContent(p) {
                 }
             }
 
-            const shape = `<polyline points="${pts.join(' ')}" stroke="${strokeColor}" stroke-width="${strokeWidth}" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>`;
+            const baseShape = `<polyline points="${pts.join(' ')}" stroke="${strokeColor}" stroke-width="${strokeWidth}" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>`;
+            const shape = symmetrize(baseShape, p.symmetry, p.radialSteps);
             parts.push(p.seamless ? tile(shape) : shape);
         }
     }

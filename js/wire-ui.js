@@ -41,6 +41,8 @@ export function collectWireParams(createNewSeed = false) {
         colorMode:       modeVal('colorMode'),
         widthMode:       modeVal('widthMode'),
         stepDirections:  modeVal('stepDirections'),
+        symmetry:        modeVal('symmetry'),
+        radialSteps:     Math.max(2, parseInt(val('radialSteps'))),
     };
 }
 
@@ -165,11 +167,13 @@ const DEFAULTS = {
     maxOriginSpread: 0,
     minStepLength: 64,
     maxStepLength: 512,
+    radialSteps: 6,
 };
 const MODE_DEFAULTS = {
     colorMode: 'linear',
     widthMode: 'random',
     stepDirections: 'any',
+    symmetry: 'none',
 };
 
 export function resetDefaults() {
