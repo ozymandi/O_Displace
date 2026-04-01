@@ -9,6 +9,15 @@ window.openPaletteModal = openPaletteModal;
 window.closePaletteModal = closePaletteModal;
 window.generateNew = () => render(true);
 
+// Scale selector
+document.querySelectorAll('.scale-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('pngScale').value = btn.dataset.scale;
+    });
+});
+
 window.addEventListener('load', () => {
     log("O'Displace initialized.");
 

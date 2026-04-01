@@ -174,9 +174,10 @@ export function bindExport() {
     });
 
     document.getElementById('btnExportPNG').addEventListener('click', async () => {
-        log('Rendering PNG…');
-        const ok = await exportPNG(getSeed());
-        if (ok) log(`PNG saved: odisplace_${getSeed()}.png`);
+        const scale = parseInt(document.getElementById('pngScale').value) || 1;
+        log(`Rendering PNG @ ${scale}x (${1024 * scale}px)…`);
+        const ok = await exportPNG(getSeed(), scale);
+        if (ok) log(`PNG saved: odisplace_${getSeed()}@${scale}x.png`);
         else log('PNG export failed.');
     });
 }

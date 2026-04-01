@@ -369,6 +369,45 @@ button:active { opacity: 0.8; }
 }
 .action-row button { flex: 1; height: 32px; }
 
+/* ─── PNG export row ────────────────────────────────────────────────────────── */
+.png-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.png-row .btn-png { flex: 1; height: 32px; }
+
+.scale-group {
+    display: flex;
+    background: var(--ob-panel-2);
+    border: 1px solid var(--ob-line);
+    border-radius: var(--ob-radius-control);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.scale-btn {
+    height: 32px;
+    width: 34px;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    color: var(--ob-muted);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    border-right: 1px solid var(--ob-line);
+}
+.scale-btn:last-child { border-right: none; }
+.scale-btn:hover { background: var(--ob-hover); color: var(--ob-ink); }
+.scale-btn.active {
+    background: var(--ob-blue);
+    color: #fff;
+}
+
 /* ─── Console panel ─────────────────────────────────────────────────────────── */
 .console-panel {
     display: flex;

@@ -207,6 +207,15 @@
     <div class="action-row">
         <button class="btn-generate" onclick="generateNew()">Generate New Seed</button>
         <button class="btn-export" id="btnExportSVG">Save SVG</button>
+    </div>
+    <div class="png-row">
+        <div class="scale-group" role="group" aria-label="PNG scale">
+            <button class="scale-btn active" data-scale="1">1×</button>
+            <button class="scale-btn" data-scale="2">2×</button>
+            <button class="scale-btn" data-scale="3">3×</button>
+            <button class="scale-btn" data-scale="4">4×</button>
+        </div>
+        <input type="hidden" id="pngScale" value="1">
         <button class="btn-png" id="btnExportPNG">Save PNG</button>
     </div>
 

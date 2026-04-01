@@ -14,13 +14,15 @@ export function exportSVG(seed) {
 
 /**
  * Export the current viewport as PNG via Canvas.
- * This captures SVG filters (e.g. Normal Map feConvolveMatrix) as rendered by the browser.
+ * @param {number} seed
+ * @param {number} scale  1 | 2 | 3 | 4  (multiplier of base 1024px)
  */
-export function exportPNG(seed) {
+export function exportPNG(seed, scale = 1) {
     const el = document.getElementById('svgContainer').querySelector('svg');
     if (!el) return Promise.resolve(false);
 
-    const SIZE = 1024;
+    const BASE = 1024;
+    const SIZE = BASE * scale;
     const svgSource = new XMLSerializer().serializeToString(el);
     const svgBlob = new Blob([svgSource], { type: 'image/svg+xml;charset=utf-8' });
     const url = URL.createObjectURL(svgBlob);
@@ -36,7 +38,7 @@ export function exportPNG(seed) {
             canvas.toBlob(blob => {
                 const link = document.createElement('a');
                 link.href = URL.createObjectURL(blob);
-                link.download = `odisplace_${seed}.png`;
+                link.download = `odisplace_${seed}@${scale}x.png`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
