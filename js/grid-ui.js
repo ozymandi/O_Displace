@@ -47,10 +47,10 @@ export function collectGridParams(createNewSeed = false) {
         margin:               Math.max(0, val('margin')),
         visibility:           val('visibility'),
 
-        fillMode:             modeVal('fillMode'),
+        fillMode:             checked('fillEnable') ? modeVal('fillMode') : 'none',
         fillColor:            document.getElementById('fillColor').value,
 
-        borderMode:           modeVal('borderMode'),
+        borderMode:           checked('borderEnable') ? modeVal('borderMode') : 'none',
         borderColor:          document.getElementById('borderColor').value,
         borderWidth:          Math.max(0.5, val('borderWidth')),
         borderWidthRandom:    val('borderWidthRandom'),
@@ -289,6 +289,8 @@ export function bindASEImport() {
 const DEFAULTS = {
     bgBrightness: 8,
     seamlessEnable: false,
+    fillEnable: true,
+    borderEnable: true,
     renderMode: 'color',
     paletteSelect: 'grayscale',
     livePreview: true,
