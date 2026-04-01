@@ -85,6 +85,7 @@ export function collectGridParams(createNewSeed = false) {
         textMargin:           val('textMargin'),
         textBgEnable:         checked('textBgEnable'),
         textBorderEnable:     checked('textBorderEnable'),
+        textFontSize:         val('textFontSize'),
     };
 }
 
@@ -316,6 +317,7 @@ const DEFAULTS = {
     textMargin: 4,
     textBgEnable: false,
     textBorderEnable: false,
+    textFontSize: 1,
 };
 const MODE_DEFAULTS = {
     gridType:    'grid',

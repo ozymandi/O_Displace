@@ -251,7 +251,7 @@ function renderCell(cell, p, bgColor, ctr) {
         const margin = p.textMargin;
         const maxFontH = (h - margin * 2) / (lines.length * 1.35);
         const maxFontW = (w - margin * 2) / Math.max(1, ...lines.map(l => l.length)) / 0.6;
-        const fontSize = Math.max(4, Math.min(maxFontH, maxFontW, w * 0.9));
+        const fontSize = Math.max(4, Math.min(maxFontH, maxFontW, w * 0.9)) * (p.textFontSize ?? 1);
         const lineH = fontSize * 1.35;
         const totalH = lines.length * lineH;
 
