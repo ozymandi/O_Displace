@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standard Block — O'Gen</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+<!-- ─── Palette Modal ─────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="paletteModal">
+    <div class="modal-box">
+        <div class="modal-title">Custom Palette</div>
+
+        <div class="color-slots">
+            <div class="color-slot">
+                <input type="color" id="c0" value="#FF0055">
+                <input type="text"  id="h0" value="#FF0055" maxlength="7" class="hex-input">
+                <input type="checkbox" id="en0" checked title="Enable">
+            </div>
+            <div class="color-slot">
+                <input type="color" id="c1" value="#00FFCC">
+                <input type="text"  id="h1" value="#00FFCC" maxlength="7" class="hex-input">
+                <input type="checkbox" id="en1" checked title="Enable">
+            </div>
+            <div class="color-slot">
+                <input type="color" id="c2" value="#9D00FF">
+                <input type="text"  id="h2" value="#9D00FF" maxlength="7" class="hex-input">
+                <input type="checkbox" id="en2" checked title="Enable">
+            </div>
+            <div class="color-slot">
+                <input type="color" id="c3" value="#2B0F4C">
+                <input type="text"  id="h3" value="#2B0F4C" maxlength="7" class="hex-input">
+                <input type="checkbox" id="en3" checked title="Enable">
+            </div>
+            <div class="color-slot">
+                <input type="color" id="c4" value="#FFFFFF">
+                <input type="text"  id="h4" value="#FFFFFF" maxlength="7" class="hex-input">
+                <input type="checkbox" id="en4" checked title="Enable">
+            </div>
+        </div>
+
+        <textarea class="modal-paste" id="hexPaste" placeholder="Paste CSS, XML, HEX, or rgb() here…"></textarea>
+
+        <div class="modal-actions">
+            <input type="file" id="aseFile" accept=".ase" style="display:none">
+            <button onclick="document.getElementById('aseFile').click()">Load .ase</button>
+            <button class="btn-generate" onclick="closePaletteModal()">Apply & Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- ─── Left Panel ───────────────────────────────────────────────────────── -->
+<div class="controls">
+    <a href="index.html" class="back-btn">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        O'Gen
+    </a>
+    <div class="panel-title">Standard Block</div>
+
+    <!-- Seed -->
+    <div class="seed-row">
+        <label>Seed</label>
+        <input type="text" id="seedDisplay" readonly>
+        <div class="live-wrap">
+            <label for="livePreview">Live</label>
+            <input type="checkbox" id="livePreview" checked>
+        </div>
+    </div>
+
+    <!-- Seamless toggle -->
+    <div class="seed-row">
+        <label for="seamlessEnable">Seamless tile</label>
+        <input type="checkbox" id="seamlessEnable" onchange="handleInput()">
+    </div>
+
+    <!-- Render mode -->
+    <select id="renderMode" onchange="handleInput()">
+        <option value="color">Color (Albedo)</option>
+        <option value="depth">Depth Map (Height)</option>
+        <option value="normal">Normal Map</option>
+    </select>
+
+    <!-- Palette -->
+    <div class="select-row">
+        <select id="paletteSelect" onchange="handlePaletteChange()">
+            <option value="grayscale">Grayscale (Classic)</option>
+            <option value="custom">Custom (Paste / ASE)</option>
+            <option value="cyberpunk">Cyberpunk (Neon)</option>
+            <option value="mars">Mars Base (Orange/Red)</option>
+            <option value="ocean">Deep Ocean (Blues)</option>
+        </select>
+        <button id="editCustomBtn" class="btn-icon" onclick="openPaletteModal()" title="Edit palette" style="display:none">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Iterations + Bg Brightness -->
+    <div class="module-group">
+        <div class="row">
+            <label>Iterations</label>
+            <input type="number" id="globalIter" value="1500" onchange="handleInput()">
+        </div>
+        <div class="row">
+            <label>Bg Brightness</label>
+            <input type="range" id="bgBrightness" min="0" max="255" value="30" oninput="handleInput()">
+        </div>
+    </div>
+
+    <!-- Layer Matrix -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3v18" stroke="currentColor" stroke-width="2"/></svg>
+                Layer Matrix
+            </div>
+            <input type="checkbox" id="matrixEnable" checked onchange="handleInput()">
+        </div>
+        <div class="row"><label>Grid Size (NxN)</label><input type="range" id="matrixSize"   min="1" max="10"   value="4"   oninput="handleInput()"></div>
+        <div class="row"><label>Start Offset %</label>  <input type="range" id="matrixStart"  min="-100" max="100" value="-50" oninput="handleInput()"></div>
+        <div class="row"><label>End Offset %</label>    <input type="range" id="matrixEnd"    min="-100" max="100" value="50"  oninput="handleInput()"></div>
+        <div class="row"><label>Random Factor %</label> <input type="range" id="matrixRandom" min="0" max="100"   value="15"  oninput="handleInput()"></div>
+        <div class="row">
+            <label>Invert Direction</label>
+            <input type="checkbox" id="matrixInvert" onchange="handleInput()">
+        </div>
+    </div>
+
+    <!-- Solid Blocks -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/></svg>
+                Solid Blocks
+            </div>
+            <input type="checkbox" id="solidEnable" checked onchange="handleInput()">
+        </div>
+        <div class="row"><label>Scale %</label><input type="range" id="solidScale" min="1" max="100" value="80" oninput="handleInput()"></div>
+    </div>
+
+    <!-- Alpha Blocks -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" fill-opacity="0.4" stroke="currentColor" stroke-width="2"/></svg>
+                Alpha Blocks
+            </div>
+            <input type="checkbox" id="alphaEnable" checked onchange="handleInput()">
+        </div>
+        <div class="row"><label>Scale %</label>  <input type="range" id="alphaScale"   min="1"  max="100" value="100" oninput="handleInput()"></div>
+        <div class="row"><label>Opacity %</label> <input type="range" id="alphaOpacity" min="10" max="100" value="50"  oninput="handleInput()"></div>
+    </div>
+
+    <!-- Grid Matrices -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg>
+                Grid Matrices
+            </div>
+            <input type="checkbox" id="gridEnable" checked onchange="handleInput()">
+        </div>
+        <div class="row"><label>Scale %</label>  <input type="range" id="gridScale"   min="1" max="100" value="40" oninput="handleInput()"></div>
+        <div class="row"><label>Spacing %</label> <input type="range" id="gridSpacing" min="0" max="100" value="20" oninput="handleInput()"></div>
+        <div class="row"><label>Max Amount</label><input type="range" id="gridAmount"  min="1" max="10"  value="5"  oninput="handleInput()"></div>
+    </div>
+
+    <!-- Vertical Bars -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="5" y="4" width="3" height="16"/><rect x="11" y="4" width="3" height="16"/><rect x="17" y="4" width="2" height="16"/></svg>
+                Vertical Bars
+            </div>
+            <input type="checkbox" id="vBarEnable" checked onchange="handleInput()">
+        </div>
+        <div class="row"><label>Scale %</label>   <input type="range" id="vBarScale"   min="1" max="100" value="60" oninput="handleInput()"></div>
+        <div class="row"><label>Spacing %</label>  <input type="range" id="vBarSpacing" min="0" max="100" value="30" oninput="handleInput()"></div>
+        <div class="row"><label>Max Amount</label> <input type="range" id="vBarAmount"  min="1" max="20"  value="6"  oninput="handleInput()"></div>
+    </div>
+
+    <!-- Horizontal Bars -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="3"/><rect x="4" y="11" width="16" height="3"/><rect x="4" y="17" width="16" height="2"/></svg>
+                Horizontal Bars
+            </div>
+            <input type="checkbox" id="hBarEnable" checked onchange="handleInput()">
+        </div>
+        <div class="row"><label>Scale %</label>   <input type="range" id="hBarScale"   min="1" max="100" value="60" oninput="handleInput()"></div>
+        <div class="row"><label>Spacing %</label>  <input type="range" id="hBarSpacing" min="0" max="100" value="30" oninput="handleInput()"></div>
+        <div class="row"><label>Max Amount</label> <input type="range" id="hBarAmount"  min="1" max="20"  value="6"  oninput="handleInput()"></div>
+    </div>
+
+    <!-- Wires & Nodes -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="2"/></svg>
+                Wires &amp; Nodes
+            </div>
+            <input type="checkbox" id="wireEnable" checked onchange="handleInput()">
+        </div>
+        <div class="row"><label>Line Width</label>      <input type="range" id="wireWidth"  min="1"  max="20" value="4"  oninput="handleInput()"></div>
+        <div class="row"><label>Cross Prob. %</label>   <input type="range" id="crossProb"  min="0"  max="100" value="30" oninput="handleInput()"></div>
+        <div class="row"><label>Max Nodes</label>       <input type="range" id="nodeAmount" min="0"  max="10" value="3"  oninput="handleInput()"></div>
+        <div class="row"><label>Node Spacing</label>    <input type="range" id="nodeSpacing" min="5" max="30" value="10" oninput="handleInput()"></div>
+        <div class="row"><label>Random Center %</label> <input type="range" id="wireCenter" min="0"  max="100" value="30" oninput="handleInput()"></div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions-grid">
+        <button class="btn-generate" onclick="generateNew()">Generate New Seed</button>
+        <button class="btn-reset" onclick="resetDefaults()" title="Reset all settings to defaults">↺</button>
+        <button class="btn-export" id="btnExportSVG">Save SVG</button>
+        <button class="btn-png" id="btnExportPNG">Save PNG</button>
+    </div>
+
+    <!-- PNG scale popup -->
+    <div id="pngPopup" class="png-popup" style="display:none;">
+        <div class="png-popup-inner">
+            <div class="scale-group">
+                <button class="scale-btn active" data-scale="1">1×<span>1024px</span></button>
+                <button class="scale-btn" data-scale="2">2×<span>2048px</span></button>
+                <button class="scale-btn" data-scale="3">3×<span>3072px</span></button>
+                <button class="scale-btn" data-scale="4">4×<span>4096px</span></button>
+            </div>
+            <input type="hidden" id="pngScale" value="1">
+            <button class="btn-png btn-png-confirm" id="btnPngConfirm">Export PNG</button>
+        </div>
+    </div>
+
+    <!-- Console -->
+    <div class="console-panel">
+        <label>Console</label>
+        <textarea id="consoleLog" readonly></textarea>
+    </div>
+</div>
+
+<!-- ─── Viewport ──────────────────────────────────────────────────────────── -->
+<div class="viewport">
+    <div id="svgContainer" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"></div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
