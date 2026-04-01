@@ -215,12 +215,14 @@ function renderCell(cell, p, bgColor, ctr) {
     parts.push(`<path d="${pathD}" fill="${fillColor}"${strokeAttr}/>`);
 
     // Corner figures (rect cells only)
-    if (!isHex && p.cornerFigEnable && borderColor !== 'none') {
+    if (!isHex && p.cornerFigEnable) {
         const figR = Math.max(0.5, vary(p.borderWidth * p.cornerFigMult, p.cornerFigRandom));
         const corners = [[x, y], [x + w, y], [x + w, y + h], [x, y + h]];
-        const figFill = borderColor;
+        // fallback: border → fill → light gray
+        const figFill = borderColor !== 'none' ? borderColor
+            : fillColor !== 'none' ? fillColor : toGray(180);
         const bgFill = fillColor !== 'none' ? fillColor : bgColor;
-        const sw = Math.max(0.5, borderWidth * 0.5);
+        const sw = Math.max(1, borderWidth);  // full border width for stroked figures
         for (const [fx, fy] of corners) {
             const cx = fx.toFixed(2), cy = fy.toFixed(2);
             const r = figR.toFixed(2);
@@ -237,12 +239,10 @@ function renderCell(cell, p, bgColor, ctr) {
                 case 'square-outline':
                     parts.push(`<rect x="${(fx - figR).toFixed(2)}" y="${(fy - figR).toFixed(2)}" width="${(figR * 2).toFixed(2)}" height="${(figR * 2).toFixed(2)}" fill="${bgFill}" stroke="${figFill}" stroke-width="${sw.toFixed(2)}"/>`);
                     break;
-                case 'cross': {
-                    const a = (figR * 1.2).toFixed(2);
+                case 'cross':
                     parts.push(`<line x1="${(fx - figR * 1.2).toFixed(2)}" y1="${cy}" x2="${(fx + figR * 1.2).toFixed(2)}" y2="${cy}" stroke="${figFill}" stroke-width="${sw.toFixed(2)}" stroke-linecap="square"/>`);
                     parts.push(`<line x1="${cx}" y1="${(fy - figR * 1.2).toFixed(2)}" x2="${cx}" y2="${(fy + figR * 1.2).toFixed(2)}" stroke="${figFill}" stroke-width="${sw.toFixed(2)}" stroke-linecap="square"/>`);
                     break;
-                }
                 case 'diamond':
                     parts.push(`<polygon points="${cx},${(fy - figR).toFixed(2)} ${(fx + figR).toFixed(2)},${cy} ${cx},${(fy + figR).toFixed(2)} ${(fx - figR).toFixed(2)},${cy}" fill="${figFill}"/>`);
                     break;
