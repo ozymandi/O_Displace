@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid — O'Gen</title>
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .corner-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+        .corner-item {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .corner-item .corner-label {
+            font-size: 10px;
+            color: var(--ob-muted);
+            text-align: center;
+        }
+        .corner-item .seg-group {
+            display: flex;
+        }
+        .anchor-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
+        }
+        .anchor-grid .seg-btn {
+            padding: 4px 0;
+            font-size: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ─── Palette Modal ─────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="paletteModal">
+    <div class="modal-box">
+        <div class="modal-title">Custom Palette</div>
+        <div class="color-slots">
+            <div class="color-slot">
+                <input type="color" id="c0" value="#FF0055">
+                <input type="text"  id="h0" value="#FF0055" maxlength="7" class="hex-input">
+                <input type="checkbox" id="en0" checked title="Enable">
+            </div>
+            <div class="color-slot">
+                <input type="color" id="c1" value="#00FFCC">
+                <input type="text"  id="h1" value="#00FFCC" maxlength="7" class="hex-input">
+                <input type="checkbox" id="en1" checked title="Enable">
+            </div>
+            <div class="color-slot">
+                <input type="color" id="c2" value="#9D00FF">
+                <input type="text"  id="h2" value="#9D00FF" maxlength="7" class="hex-input">
+                <input type="checkbox" id="en2" checked title="Enable">
+            </div>
+            <div class="color-slot">
+                <input type="color" id="c3" value="#2B0F4C">
+                <input type="text"  id="h3" value="#2B0F4C" maxlength="7" class="hex-input">
+                <input type="checkbox" id="en3" checked title="Enable">
+            </div>
+            <div class="color-slot">
+                <input type="color" id="c4" value="#FFFFFF">
+                <input type="text"  id="h4" value="#FFFFFF" maxlength="7" class="hex-input">
+                <input type="checkbox" id="en4" checked title="Enable">
+            </div>
+        </div>
+        <textarea class="modal-paste" id="hexPaste" placeholder="Paste CSS, XML, HEX, or rgb() here…"></textarea>
+        <div class="modal-actions">
+            <input type="file" id="aseFile" accept=".ase" style="display:none">
+            <button onclick="document.getElementById('aseFile').click()">Load .ase</button>
+            <button onclick="shufflePalette()">Shuffle</button>
+            <button class="btn-generate" onclick="closePaletteModal()">Apply & Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- ─── Left Panel ───────────────────────────────────────────────────────── -->
+<div class="controls">
+    <div class="panel-title">
+        <a href="index.html" class="back-btn">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </a>
+        Grid
+    </div>
+
+    <!-- Seed + Live -->
+    <div class="seed-row">
+        <label>Seed</label>
+        <input type="text" id="seedDisplay" readonly>
+        <div class="live-wrap">
+            <label for="livePreview">Live</label>
+            <input type="checkbox" id="livePreview" checked>
+        </div>
+    </div>
+
+    <!-- Render mode -->
+    <select id="renderMode" onchange="handleInput()">
+        <option value="color">Color (Albedo)</option>
+        <option value="depth">Depth Map (Height)</option>
+        <option value="normal">Normal Map</option>
+    </select>
+
+    <!-- Palette -->
+    <div class="select-row">
+        <select id="paletteSelect" onchange="handlePaletteChange()">
+            <option value="grayscale">Grayscale (Classic)</option>
+            <option value="custom">Custom (Paste / ASE)</option>
+            <option value="cyberpunk">Cyberpunk (Neon)</option>
+            <option value="mars">Mars Base (Orange/Red)</option>
+            <option value="ocean">Deep Ocean (Blues)</option>
+        </select>
+        <button id="editCustomBtn" class="btn-icon" onclick="openPaletteModal()" title="Edit palette" style="display:none">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Bg Brightness -->
+    <div class="module-group">
+        <div class="row">
+            <label>Bg Brightness</label>
+            <input type="range" id="bgBrightness" min="0" max="255" value="8" oninput="handleInput()">
+        </div>
+    </div>
+
+    <!-- Grid Layout -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" fill="none"/><rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" fill="none"/><rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" fill="none"/><rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                Grid Layout
+            </div>
+        </div>
+        <div class="seg-group" data-param="gridType">
+            <button class="seg-btn active" data-value="grid">Grid</button>
+            <button class="seg-btn" data-value="brick-row">Brick ↔</button>
+            <button class="seg-btn" data-value="brick-col">Brick ↕</button>
+            <button class="seg-btn" data-value="hex-row">Hex ↔</button>
+            <button class="seg-btn" data-value="hex-col">Hex ↕</button>
+        </div>
+        <div class="row"><label>Columns</label>      <input type="range" id="cellsX" min="1" max="24" value="8" oninput="handleInput()"></div>
+        <div class="row"><label>Rows</label>          <input type="range" id="cellsY" min="1" max="24" value="8" oninput="handleInput()"></div>
+        <div class="row"><label>Gap</label>            <input type="range" id="margin" min="0" max="50" value="4" oninput="handleInput()"></div>
+        <div class="row"><label>Visibility %</label>  <input type="range" id="visibility" min="0" max="100" value="100" oninput="handleInput()"></div>
+    </div>
+
+    <!-- Fill -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" fill="currentColor" opacity=".4"/><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                Fill
+            </div>
+        </div>
+        <div class="seg-group" data-param="fillMode">
+            <button class="seg-btn" data-value="none">None</button>
+            <button class="seg-btn active" data-value="mono">Mono</button>
+            <button class="seg-btn" data-value="palette">Palette</button>
+        </div>
+        <div class="row" id="fillColorRow">
+            <label>Color</label>
+            <input type="color" id="fillColor" value="#3A3A3A" oninput="handleInput()">
+        </div>
+    </div>
+
+    <!-- Border -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2.5" fill="none"/></svg>
+                Border
+            </div>
+        </div>
+        <div class="seg-group" data-param="borderMode">
+            <button class="seg-btn" data-value="none">None</button>
+            <button class="seg-btn active" data-value="mono">Mono</button>
+            <button class="seg-btn" data-value="palette">Palette</button>
+        </div>
+        <div class="row" id="borderColorRow">
+            <label>Color</label>
+            <input type="color" id="borderColor" value="#888888" oninput="handleInput()">
+        </div>
+        <div class="row" id="borderWidthRow">
+            <label>Width</label>
+            <input type="range" id="borderWidth" min="1" max="20" value="2" oninput="handleInput()">
+        </div>
+        <div class="row" id="borderWidthRandomRow">
+            <label>Width random</label>
+            <input type="range" id="borderWidthRandom" min="0" max="2" step="0.05" value="0" oninput="handleInput()">
+        </div>
+    </div>
+
+    <!-- Corners -->
+    <div class="module-group" id="cornerSection">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><path d="M3 9V5a2 2 0 0 1 2-2h4M15 3h4a2 2 0 0 1 2 2v4M21 15v4a2 2 0 0 1-2 2h-4M9 21H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+                Corners
+            </div>
+        </div>
+        <div class="corner-grid">
+            <div class="corner-item">
+                <span class="corner-label">Top-left</span>
+                <div class="seg-group" data-param="cornerTL">
+                    <button class="seg-btn active" data-value="sharp" title="Sharp">S</button>
+                    <button class="seg-btn" data-value="round" title="Round">R</button>
+                    <button class="seg-btn" data-value="chamfer" title="Chamfer">C</button>
+                </div>
+            </div>
+            <div class="corner-item">
+                <span class="corner-label">Top-right</span>
+                <div class="seg-group" data-param="cornerTR">
+                    <button class="seg-btn active" data-value="sharp" title="Sharp">S</button>
+                    <button class="seg-btn" data-value="round" title="Round">R</button>
+                    <button class="seg-btn" data-value="chamfer" title="Chamfer">C</button>
+                </div>
+            </div>
+            <div class="corner-item">
+                <span class="corner-label">Bottom-left</span>
+                <div class="seg-group" data-param="cornerBL">
+                    <button class="seg-btn active" data-value="sharp" title="Sharp">S</button>
+                    <button class="seg-btn" data-value="round" title="Round">R</button>
+                    <button class="seg-btn" data-value="chamfer" title="Chamfer">C</button>
+                </div>
+            </div>
+            <div class="corner-item">
+                <span class="corner-label">Bottom-right</span>
+                <div class="seg-group" data-param="cornerBR">
+                    <button class="seg-btn active" data-value="sharp" title="Sharp">S</button>
+                    <button class="seg-btn" data-value="round" title="Round">R</button>
+                    <button class="seg-btn" data-value="chamfer" title="Chamfer">C</button>
+                </div>
+            </div>
+        </div>
+        <div class="row"><label>Radius</label>        <input type="range" id="cornerRadius" min="0" max="80" value="0" oninput="handleInput()"></div>
+        <div class="row"><label>Radius random</label> <input type="range" id="cornerRadiusRandom" min="0" max="2" step="0.05" value="0" oninput="handleInput()"></div>
+    </div>
+
+    <!-- Corner Figures -->
+    <div class="module-group" id="cornerFigSection">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><circle cx="5" cy="5" r="2" fill="currentColor"/><circle cx="19" cy="5" r="2" fill="currentColor"/><circle cx="5" cy="19" r="2" fill="currentColor"/><circle cx="19" cy="19" r="2" fill="currentColor"/></svg>
+                Corner Figures
+            </div>
+            <input type="checkbox" id="cornerFigEnable" onchange="handleInput()">
+        </div>
+        <div class="seg-group" data-param="cornerFigType">
+            <button class="seg-btn active" data-value="circle">Circle</button>
+            <button class="seg-btn" data-value="square">Square</button>
+        </div>
+        <div class="row"><label>Size mult</label>   <input type="range" id="cornerFigMult" min="0.5" max="8" step="0.1" value="2" oninput="handleInput()"></div>
+        <div class="row"><label>Size random</label> <input type="range" id="cornerFigRandom" min="0" max="2" step="0.05" value="0" oninput="handleInput()"></div>
+    </div>
+
+    <!-- Inner Grid -->
+    <div class="module-group" id="innerGridSection">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"/><line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" stroke-width="1.5"/><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.5"/></svg>
+                Inner Grid
+            </div>
+            <input type="checkbox" id="innerGridEnable" onchange="handleInput()">
+        </div>
+        <div class="row"><label>Cols</label>             <input type="range" id="innerGridX" min="0" max="8" value="1" oninput="handleInput()"></div>
+        <div class="row"><label>Rows</label>             <input type="range" id="innerGridY" min="0" max="8" value="1" oninput="handleInput()"></div>
+        <div class="row"><label>Thickness mult</label>   <input type="range" id="innerGridThickMult" min="0.1" max="3" step="0.05" value="0.5" oninput="handleInput()"></div>
+        <div class="row"><label>Thickness random</label> <input type="range" id="innerGridThickRandom" min="0" max="2" step="0.05" value="0" oninput="handleInput()"></div>
+        <div class="row"><label>Opacity</label>          <input type="range" id="innerGridOpacity" min="0" max="1" step="0.01" value="0.5" oninput="handleInput()"></div>
+        <div class="row"><label>Opacity random</label>   <input type="range" id="innerGridOpacityRandom" min="0" max="2" step="0.05" value="0" oninput="handleInput()"></div>
+    </div>
+
+    <!-- Text -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                Text
+            </div>
+            <input type="checkbox" id="textEnable" onchange="handleInput()">
+        </div>
+        <div class="row"><label>Visibility %</label>    <input type="range" id="textVisibility" min="0" max="100" value="80" oninput="handleInput()"></div>
+        <div class="row"><label>Lines</label>            <input type="range" id="textLineCount" min="1" max="6" value="1" oninput="updateCustomLines(); handleInput()"></div>
+        <div class="row" id="textWordsRow">
+            <label>Words / line</label>
+            <input type="range" id="textWordsPerLine" min="1" max="6" value="1" oninput="handleInput()">
+        </div>
+        <div class="seg-group" data-param="textMode">
+            <button class="seg-btn active" data-value="random">Random</button>
+            <button class="seg-btn" data-value="custom">Custom</button>
+        </div>
+        <div id="customLinesContainer" style="display:none"></div>
+        <div class="row"><label>Counter</label></div>
+        <div class="seg-group" data-param="counterPos">
+            <button class="seg-btn active" data-value="none">Off</button>
+            <button class="seg-btn" data-value="before">Before</button>
+            <button class="seg-btn" data-value="after">After</button>
+        </div>
+        <div class="row"><label>Anchor</label></div>
+        <div class="anchor-grid seg-group" data-param="textAnchor">
+            <button class="seg-btn" data-value="tl" title="Top-left">↖</button>
+            <button class="seg-btn" data-value="tc" title="Top-center">↑</button>
+            <button class="seg-btn" data-value="tr" title="Top-right">↗</button>
+            <button class="seg-btn" data-value="ml" title="Mid-left">←</button>
+            <button class="seg-btn active" data-value="mc" title="Center">·</button>
+            <button class="seg-btn" data-value="mr" title="Mid-right">→</button>
+            <button class="seg-btn" data-value="bl" title="Bot-left">↙</button>
+            <button class="seg-btn" data-value="bc" title="Bot-center">↓</button>
+            <button class="seg-btn" data-value="br" title="Bot-right">↘</button>
+        </div>
+        <div class="row"><label>Margin</label> <input type="range" id="textMargin" min="0" max="20" value="4" oninput="handleInput()"></div>
+        <div class="row">
+            <label>Text bg</label>
+            <input type="checkbox" id="textBgEnable" onchange="handleInput()">
+            <label style="margin-left:12px">Border</label>
+            <input type="checkbox" id="textBorderEnable" onchange="handleInput()">
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions-grid">
+        <button class="btn-generate" onclick="generateNew()">Generate New Seed</button>
+        <button class="btn-reset" onclick="resetDefaults()" title="Reset all settings to defaults">↺</button>
+        <button class="btn-export" id="btnExportSVG">Save SVG</button>
+        <button class="btn-png" id="btnExportPNG">Save PNG</button>
+    </div>
+
+    <!-- PNG scale popup -->
+    <div id="pngPopup" class="png-popup" style="display:none;">
+        <div class="png-popup-inner">
+            <div class="scale-group">
+                <button class="scale-btn active" data-scale="1">1×<span>1024px</span></button>
+                <button class="scale-btn" data-scale="2">2×<span>2048px</span></button>
+                <button class="scale-btn" data-scale="3">3×<span>3072px</span></button>
+                <button class="scale-btn" data-scale="4">4×<span>4096px</span></button>
+            </div>
+            <input type="hidden" id="pngScale" value="1">
+            <button class="btn-png btn-png-confirm" id="btnPngConfirm">Export PNG</button>
+        </div>
+    </div>
+
+    <!-- Console -->
+    <div class="console-panel">
+        <label>Console</label>
+        <textarea id="consoleLog" readonly></textarea>
+    </div>
+</div>
+
+<!-- ─── Viewport ──────────────────────────────────────────────────────────── -->
+<div class="viewport">
+    <div id="svgContainer" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"></div>
+</div>
+
+<script type="module" src="js/grid-main.js"></script>
+</body>
+</html>
