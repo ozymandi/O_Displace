@@ -119,10 +119,9 @@ function buildContent(p) {
         const strokeWidth = Math.max(1, Math.round(1 + tWidth * (p.maxWireWidth - 1)));
 
         for (let w = 0; w < p.wiresPerLayer; w++) {
-            // Origin point — burst always from center, others use spread
-            const spread = p.stepDirections === 'burst' ? 0 : p.maxOriginSpread;
-            const ox = W / 2 + (random() - 0.5) * 2 * spread;
-            const oy = H / 2 + (random() - 0.5) * 2 * spread;
+            // Origin point
+            const ox = W / 2 + (random() - 0.5) * 2 * p.maxOriginSpread;
+            const oy = H / 2 + (random() - 0.5) * 2 * p.maxOriginSpread;
 
             let cx = ox, cy = oy;
             const pts = [`${Math.round(cx)},${Math.round(cy)}`];
