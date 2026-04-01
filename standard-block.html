@@ -106,7 +106,7 @@
         </div>
         <div class="row">
             <label>Bg Brightness</label>
-            <input type="range" id="bgBrightness" min="0" max="255" value="30" oninput="handleInput()">
+            <input type="range" id="bgBrightness" min="0" max="255" value="8" oninput="handleInput()">
         </div>
     </div>
 
@@ -119,10 +119,10 @@
             </div>
             <input type="checkbox" id="matrixEnable" checked onchange="handleInput()">
         </div>
-        <div class="row"><label>Grid Size (NxN)</label><input type="range" id="matrixSize"   min="1" max="10"   value="4"   oninput="handleInput()"></div>
+        <div class="row"><label>Grid Size (NxN)</label><input type="range" id="matrixSize"   min="1" max="10"   value="7"   oninput="handleInput()"></div>
         <div class="row"><label>Start Offset %</label>  <input type="range" id="matrixStart"  min="-100" max="100" value="-50" oninput="handleInput()"></div>
         <div class="row"><label>End Offset %</label>    <input type="range" id="matrixEnd"    min="-100" max="100" value="50"  oninput="handleInput()"></div>
-        <div class="row"><label>Random Factor %</label> <input type="range" id="matrixRandom" min="0" max="100"   value="15"  oninput="handleInput()"></div>
+        <div class="row"><label>Random Factor %</label> <input type="range" id="matrixRandom" min="0" max="100"   value="25"  oninput="handleInput()"></div>
         <div class="row">
             <label>Invert Direction</label>
             <input type="checkbox" id="matrixInvert" onchange="handleInput()">
@@ -138,7 +138,7 @@
             </div>
             <input type="checkbox" id="solidEnable" checked onchange="handleInput()">
         </div>
-        <div class="row"><label>Scale %</label><input type="range" id="solidScale" min="1" max="100" value="80" oninput="handleInput()"></div>
+        <div class="row"><label>Scale %</label><input type="range" id="solidScale" min="1" max="100" value="40" oninput="handleInput()"></div>
     </div>
 
     <!-- Alpha Blocks -->
@@ -163,9 +163,9 @@
             </div>
             <input type="checkbox" id="gridEnable" checked onchange="handleInput()">
         </div>
-        <div class="row"><label>Scale %</label>  <input type="range" id="gridScale"   min="1" max="100" value="40" oninput="handleInput()"></div>
-        <div class="row"><label>Spacing %</label> <input type="range" id="gridSpacing" min="0" max="100" value="20" oninput="handleInput()"></div>
-        <div class="row"><label>Max Amount</label><input type="range" id="gridAmount"  min="1" max="10"  value="5"  oninput="handleInput()"></div>
+        <div class="row"><label>Scale %</label>  <input type="range" id="gridScale"   min="1" max="100" value="50" oninput="handleInput()"></div>
+        <div class="row"><label>Spacing %</label> <input type="range" id="gridSpacing" min="0" max="100" value="50" oninput="handleInput()"></div>
+        <div class="row"><label>Max Amount</label><input type="range" id="gridAmount"  min="1" max="10"  value="8"  oninput="handleInput()"></div>
     </div>
 
     <!-- Vertical Bars -->
@@ -178,8 +178,8 @@
             <input type="checkbox" id="vBarEnable" checked onchange="handleInput()">
         </div>
         <div class="row"><label>Scale %</label>   <input type="range" id="vBarScale"   min="1" max="100" value="60" oninput="handleInput()"></div>
-        <div class="row"><label>Spacing %</label>  <input type="range" id="vBarSpacing" min="0" max="100" value="30" oninput="handleInput()"></div>
-        <div class="row"><label>Max Amount</label> <input type="range" id="vBarAmount"  min="1" max="20"  value="6"  oninput="handleInput()"></div>
+        <div class="row"><label>Spacing %</label>  <input type="range" id="vBarSpacing" min="0" max="100" value="50" oninput="handleInput()"></div>
+        <div class="row"><label>Max Amount</label> <input type="range" id="vBarAmount"  min="1" max="20"  value="10"  oninput="handleInput()"></div>
     </div>
 
     <!-- Horizontal Bars -->
@@ -191,9 +191,9 @@
             </div>
             <input type="checkbox" id="hBarEnable" checked onchange="handleInput()">
         </div>
-        <div class="row"><label>Scale %</label>   <input type="range" id="hBarScale"   min="1" max="100" value="60" oninput="handleInput()"></div>
-        <div class="row"><label>Spacing %</label>  <input type="range" id="hBarSpacing" min="0" max="100" value="30" oninput="handleInput()"></div>
-        <div class="row"><label>Max Amount</label> <input type="range" id="hBarAmount"  min="1" max="20"  value="6"  oninput="handleInput()"></div>
+        <div class="row"><label>Scale %</label>   <input type="range" id="hBarScale"   min="1" max="100" value="50" oninput="handleInput()"></div>
+        <div class="row"><label>Spacing %</label>  <input type="range" id="hBarSpacing" min="0" max="100" value="50" oninput="handleInput()"></div>
+        <div class="row"><label>Max Amount</label> <input type="range" id="hBarAmount"  min="1" max="20"  value="10"  oninput="handleInput()"></div>
     </div>
 
     <!-- Wires & Nodes -->
@@ -205,11 +205,11 @@
             </div>
             <input type="checkbox" id="wireEnable" checked onchange="handleInput()">
         </div>
-        <div class="row"><label>Line Width</label>      <input type="range" id="wireWidth"  min="1"  max="20" value="4"  oninput="handleInput()"></div>
-        <div class="row"><label>Cross Prob. %</label>   <input type="range" id="crossProb"  min="0"  max="100" value="30" oninput="handleInput()"></div>
-        <div class="row"><label>Max Nodes</label>       <input type="range" id="nodeAmount" min="0"  max="10" value="3"  oninput="handleInput()"></div>
-        <div class="row"><label>Node Spacing</label>    <input type="range" id="nodeSpacing" min="5" max="30" value="10" oninput="handleInput()"></div>
-        <div class="row"><label>Random Center %</label> <input type="range" id="wireCenter" min="0"  max="100" value="30" oninput="handleInput()"></div>
+        <div class="row"><label>Line Width</label>      <input type="range" id="wireWidth"  min="1"  max="20" value="2"  oninput="handleInput()"></div>
+        <div class="row"><label>Cross Prob. %</label>   <input type="range" id="crossProb"  min="0"  max="100" value="50" oninput="handleInput()"></div>
+        <div class="row"><label>Max Nodes</label>       <input type="range" id="nodeAmount" min="0"  max="10" value="5"  oninput="handleInput()"></div>
+        <div class="row"><label>Node Spacing</label>    <input type="range" id="nodeSpacing" min="5" max="30" value="12" oninput="handleInput()"></div>
+        <div class="row"><label>Random Center %</label> <input type="range" id="wireCenter" min="0"  max="100" value="60" oninput="handleInput()"></div>
     </div>
 
     <!-- Actions -->
