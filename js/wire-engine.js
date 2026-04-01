@@ -84,7 +84,9 @@ function buildContent(p) {
     const bgColor = p.renderMode !== 'color' ? '#000000' : toGray(p.bgBrightness);
     parts.push(`<rect width="${W}" height="${H}" fill="${bgColor}" />`);
 
-    const dirPool = p.stepDirections === 'conical' ? DIRS.any : (DIRS[p.stepDirections] || DIRS.any);
+    const dirPool = (p.stepDirections === 'conical' || p.stepDirections === 'burst')
+        ? DIRS.any
+        : (DIRS[p.stepDirections] || DIRS.any);
 
     for (let layer = 0; layer < p.layerCount; layer++) {
         const tColor = computeT(layer, p.layerCount, p.colorMode);
@@ -105,16 +107,25 @@ function buildContent(p) {
         const strokeWidth = Math.max(1, Math.round(1 + tWidth * (p.maxWireWidth - 1)));
 
         for (let w = 0; w < p.wiresPerLayer; w++) {
-            // Origin point
-            const ox = W / 2 + (random() - 0.5) * 2 * p.maxOriginSpread;
-            const oy = H / 2 + (random() - 0.5) * 2 * p.maxOriginSpread;
+            // Origin point — burst always from center, others use spread
+            const spread = p.stepDirections === 'burst' ? 0 : p.maxOriginSpread;
+            const ox = W / 2 + (random() - 0.5) * 2 * spread;
+            const oy = H / 2 + (random() - 0.5) * 2 * spread;
 
             let cx = ox, cy = oy;
             const pts = [`${Math.round(cx)},${Math.round(cy)}`];
 
             // Initial direction
             let dir;
-            if (p.stepDirections === 'conical') {
+            if (p.stepDirections === 'burst') {
+                // Evenly distributed radial angle, small jitter
+                const totalWires = p.layerCount * p.wiresPerLayer;
+                const wireIdx = layer * p.wiresPerLayer + w;
+                const baseAngle = (wireIdx / totalWires) * Math.PI * 2;
+                const jitter = (random() - 0.5) * (Math.PI * 2 / totalWires) * 0.5;
+                const a = baseAngle + jitter;
+                dir = [Math.cos(a), Math.sin(a)];
+            } else if (p.stepDirections === 'conical') {
                 const dx = ox - W / 2, dy = oy - H / 2;
                 const len = Math.sqrt(dx * dx + dy * dy) || 1;
                 dir = [dx / len, dy / len];
@@ -130,7 +141,11 @@ function buildContent(p) {
                 pts.push(`${Math.round(cx)},${Math.round(cy)}`);
 
                 // Update direction
-                if (p.stepDirections === 'conical') {
+                if (p.stepDirections === 'burst') {
+                    // Keep going outward, tiny angle drift only
+                    const a = Math.atan2(dir[1], dir[0]) + (random() - 0.5) * 0.3;
+                    dir = [Math.cos(a), Math.sin(a)];
+                } else if (p.stepDirections === 'conical') {
                     const bdx = cx - W / 2, bdy = cy - H / 2;
                     const blen = Math.sqrt(bdx * bdx + bdy * bdy) || 1;
                     const base = [bdx / blen, bdy / blen];
