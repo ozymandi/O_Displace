@@ -25,6 +25,7 @@ export function collectParams(createNewSeed = false) {
 
     return {
         createNewSeed,
+        seamless: checked('seamlessEnable'),
         iterations: Math.max(1, parseInt(val('globalIter'))),
         palette: document.getElementById('paletteSelect').value,
         renderMode: document.getElementById('renderMode').value,

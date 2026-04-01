@@ -12,6 +12,19 @@ const W = 1024;
 const H = 1024;
 const GRID = 10;
 
+const TILE_OFFSETS = [
+    [-W, -H], [0, -H], [W, -H],
+    [-W,  0],          [W,  0],
+    [-W,  H], [0,  H], [W,  H],
+];
+
+/** Wrap a shape string into 8 surrounding copies (+ original at 0,0). ClipPath handles visibility. */
+function tile(shape) {
+    return TILE_OFFSETS
+        .map(([dx, dy]) => `<g transform="translate(${dx},${dy})">${shape}</g>`)
+        .join('') + shape;
+}
+
 const NORMAL_MAP_FILTER = `
 <filter id="normalMapFilter" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="linearRGB">
     <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.33 0.33 0.33 0 0" result="hMap" />
@@ -123,18 +136,20 @@ function buildContent(p, _seed) {
             }
 
             const mod = active[Math.floor(random() * active.length)];
+            let shape;
             switch (mod) {
-                case 0: parts.push(drawSolid(x, y, color, GRID, p.solid.scale)); break;
+                case 0: shape = drawSolid(x, y, color, GRID, p.solid.scale); break;
                 case 1: {
                     const op = renderMode === 'color' ? p.alpha.opacity / 100 : 1.0;
-                    parts.push(drawAlpha(x, y, color, GRID, p.alpha.scale, op));
+                    shape = drawAlpha(x, y, color, GRID, p.alpha.scale, op);
                     break;
                 }
-                case 2: parts.push(drawGrid(x, y, color, p.grid.amount, p.grid.scale, p.grid.spacing)); break;
-                case 3: parts.push(drawVBars(x, y, color, p.vbar.amount, p.vbar.scale, p.vbar.spacing)); break;
-                case 4: parts.push(drawHBars(x, y, color, p.hbar.amount, p.hbar.scale, p.hbar.spacing)); break;
-                case 5: parts.push(drawWires(x, y, color, p.wire.lineWidth, p.wire.crossProb, p.wire.nodeAmount, p.wire.nodeSpacing, p.wire.randomCenter)); break;
+                case 2: shape = drawGrid(x, y, color, p.grid.amount, p.grid.scale, p.grid.spacing); break;
+                case 3: shape = drawVBars(x, y, color, p.vbar.amount, p.vbar.scale, p.vbar.spacing); break;
+                case 4: shape = drawHBars(x, y, color, p.hbar.amount, p.hbar.scale, p.hbar.spacing); break;
+                case 5: shape = drawWires(x, y, color, p.wire.lineWidth, p.wire.crossProb, p.wire.nodeAmount, p.wire.nodeSpacing, p.wire.randomCenter); break;
             }
+            parts.push(p.seamless ? tile(shape) : shape);
         }
     }
 
