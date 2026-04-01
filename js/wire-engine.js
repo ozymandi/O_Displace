@@ -16,7 +16,7 @@ function tile(shape) {
 }
 
 /** Draw a decorative end cap at point (x, y) */
-function drawEndCap(x, y, color, sw, type) {
+function drawEndCap(x, y, color, sw, type, bgColor) {
     const r = Math.max(3, sw * 2.5);
     switch (type) {
         case 'circle':
@@ -24,9 +24,9 @@ function drawEndCap(x, y, color, sw, type) {
         case 'square':
             return `<rect x="${x - r}" y="${y - r}" width="${r * 2}" height="${r * 2}" fill="${color}"/>`;
         case 'circle-outline':
-            return `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}"/>`;
+            return `<circle cx="${x}" cy="${y}" r="${r}" fill="${bgColor}" stroke="${color}" stroke-width="${sw}"/>`;
         case 'square-outline':
-            return `<rect x="${x - r}" y="${y - r}" width="${r * 2}" height="${r * 2}" fill="none" stroke="${color}" stroke-width="${sw}"/>`;
+            return `<rect x="${x - r}" y="${y - r}" width="${r * 2}" height="${r * 2}" fill="${bgColor}" stroke="${color}" stroke-width="${sw}"/>`;
         case 'cross': {
             const a = r * 1.2;
             return `<line x1="${x - a}" y1="${y}" x2="${x + a}" y2="${y}" stroke="${color}" stroke-width="${sw}" stroke-linecap="square"/>`
@@ -218,7 +218,7 @@ function buildContent(p) {
 
             const lastPt = pts[pts.length - 1].split(',');
             const ex = parseFloat(lastPt[0]), ey = parseFloat(lastPt[1]);
-            const cap = p.lineCap !== 'none' ? drawEndCap(ex, ey, strokeColor, strokeWidth, p.lineCap) : '';
+            const cap = p.lineCap !== 'none' ? drawEndCap(ex, ey, strokeColor, strokeWidth, p.lineCap, bgColor) : '';
             const baseShape = `<polyline points="${pts.join(' ')}" stroke="${strokeColor}" stroke-width="${strokeWidth}" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>${cap}`;
             const shape = symmetrize(baseShape, p.symmetry, p.radialSteps);
             parts.push(p.seamless ? tile(shape) : shape);
