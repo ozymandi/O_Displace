@@ -1,5 +1,5 @@
 import { render, handleInput, handlePaletteChange, openPaletteModal, closePaletteModal,
-         bindColorSlots, bindHexPaste, bindASEImport, bindExport, resetDefaults, log } from './ui.js';
+         bindColorSlots, bindHexPaste, bindASEImport, bindExport, resetDefaults, shufflePalette, log } from './ui.js';
 import { getSeed } from './prng.js';
 
 // Expose to inline HTML onclick attributes
@@ -8,7 +8,8 @@ window.handlePaletteChange = handlePaletteChange;
 window.openPaletteModal = openPaletteModal;
 window.closePaletteModal = closePaletteModal;
 window.generateNew = () => render(true);
-window.resetDefaults = resetDefaults;
+window.resetDefaults    = resetDefaults;
+window.shufflePalette   = shufflePalette;
 
 // Scale selector
 document.querySelectorAll('.scale-btn').forEach(btn => {

@@ -63,6 +63,28 @@ export function handleInput() {
     if (checked('livePreview')) render(false);
 }
 
+// --- Shuffle palette ---
+export function shufflePalette() {
+    const slots = [];
+    for (let i = 0; i < 5; i++) {
+        slots.push({
+            color: document.getElementById(`c${i}`).value,
+            hex:   document.getElementById(`h${i}`).value,
+            on:    document.getElementById(`en${i}`).checked,
+        });
+    }
+    for (let i = slots.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [slots[i], slots[j]] = [slots[j], slots[i]];
+    }
+    for (let i = 0; i < 5; i++) {
+        document.getElementById(`c${i}`).value    = slots[i].color;
+        document.getElementById(`h${i}`).value    = slots[i].hex;
+        document.getElementById(`en${i}`).checked = slots[i].on;
+    }
+    handleInput();
+}
+
 // --- Palette modal ---
 export function openPaletteModal() {
     document.getElementById('paletteModal').style.display = 'flex';

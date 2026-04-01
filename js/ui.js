@@ -68,6 +68,29 @@ export function handleInput() {
     if (checked('livePreview')) render(false);
 }
 
+// --- Shuffle palette ---
+export function shufflePalette() {
+    const slots = [];
+    for (let i = 0; i < 5; i++) {
+        slots.push({
+            color: document.getElementById(`c${i}`).value,
+            hex:   document.getElementById(`h${i}`).value,
+            on:    document.getElementById(`en${i}`).checked,
+        });
+    }
+    // Fisher-Yates shuffle
+    for (let i = slots.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [slots[i], slots[j]] = [slots[j], slots[i]];
+    }
+    for (let i = 0; i < 5; i++) {
+        document.getElementById(`c${i}`).value  = slots[i].color;
+        document.getElementById(`h${i}`).value  = slots[i].hex;
+        document.getElementById(`en${i}`).checked = slots[i].on;
+    }
+    handleInput();
+}
+
 // --- Palette modal ---
 export function openPaletteModal() {
     document.getElementById('paletteModal').style.display = 'flex';
@@ -168,16 +191,16 @@ export function bindASEImport() {
 
 // --- Reset to defaults ---
 const DEFAULTS = {
-    globalIter: 1500, bgBrightness: 30,
+    globalIter: 1500, bgBrightness: 8,
     renderMode: 'color', paletteSelect: 'grayscale',
     livePreview: true,
-    matrixEnable: true,  matrixSize: 4, matrixStart: -50, matrixEnd: 50, matrixRandom: 15, matrixInvert: false,
-    solidEnable: true,   solidScale: 80,
+    matrixEnable: true,  matrixSize: 7, matrixStart: -50, matrixEnd: 50, matrixRandom: 25, matrixInvert: false,
+    solidEnable: true,   solidScale: 40,
     alphaEnable: true,   alphaScale: 100, alphaOpacity: 50,
-    gridEnable: true,    gridScale: 40, gridSpacing: 20, gridAmount: 5,
-    vBarEnable: true,    vBarScale: 60, vBarSpacing: 30, vBarAmount: 6,
-    hBarEnable: true,    hBarScale: 60, hBarSpacing: 30, hBarAmount: 6,
-    wireEnable: true,    wireWidth: 4, crossProb: 30, nodeAmount: 3, nodeSpacing: 10, wireCenter: 30,
+    gridEnable: true,    gridScale: 50, gridSpacing: 50, gridAmount: 8,
+    vBarEnable: true,    vBarScale: 60, vBarSpacing: 50, vBarAmount: 10,
+    hBarEnable: true,    hBarScale: 50, hBarSpacing: 50, hBarAmount: 10,
+    wireEnable: true,    wireWidth: 2, crossProb: 50, nodeAmount: 5, nodeSpacing: 12, wireCenter: 60,
 };
 
 export function resetDefaults() {

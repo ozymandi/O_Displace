@@ -1,5 +1,5 @@
 import { render, handleInput, handlePaletteChange, openPaletteModal, closePaletteModal,
-         bindColorSlots, bindHexPaste, bindASEImport, bindExport, resetDefaults, log } from './wire-ui.js';
+         bindColorSlots, bindHexPaste, bindASEImport, bindExport, resetDefaults, shufflePalette, log } from './wire-ui.js';
 import { getSeed } from './prng.js';
 
 // Expose to inline HTML onclick handlers
@@ -9,6 +9,7 @@ window.openPaletteModal = openPaletteModal;
 window.closePaletteModal = closePaletteModal;
 window.generateNew      = () => render(true);
 window.resetDefaults    = resetDefaults;
+window.shufflePalette   = shufflePalette;
 
 // Mode segment buttons
 document.querySelectorAll('.seg-group').forEach(group => {
