@@ -180,24 +180,28 @@ function computeCells(p) {
             }
         }
     } else if (gridType === 'hex-row') {
-        // Pointy-top: stagger by row
-        const hexH = cellsY <= 1 ? H : H / ((cellsY - 1) * 0.75 + 1);
-        const hexW = W / (cellsX + 0.5);
+        // Pointy-top: stagger by row; slot size includes gap
+        const slotH = cellsY <= 1 ? H : H / ((cellsY - 1) * 0.75 + 1);
+        const slotW = W / (cellsX + 0.5);
+        const hexW = Math.max(1, slotW - margin);
+        const hexH = Math.max(1, slotH - margin);
         for (let row = 0; row < cellsY; row++) {
             for (let col = 0; col < cellsX; col++) {
-                const cx = (col + 0.5) * hexW + (row % 2 === 1 ? hexW * 0.5 : 0);
-                const cy = row * hexH * 0.75 + hexH / 2;
+                const cx = (col + 0.5) * slotW + (row % 2 === 1 ? slotW * 0.5 : 0);
+                const cy = row * slotH * 0.75 + slotH / 2;
                 cells.push({ cx, cy, w: hexW, h: hexH, x: cx - hexW / 2, y: cy - hexH / 2, isHex: true, hexOri: 'row' });
             }
         }
     } else { // hex-col
-        // Flat-top: stagger by column
-        const hexW = cellsX <= 1 ? W : W / ((cellsX - 1) * 0.75 + 1);
-        const hexH = H / (cellsY + 0.5);
+        // Flat-top: stagger by column; slot size includes gap
+        const slotW = cellsX <= 1 ? W : W / ((cellsX - 1) * 0.75 + 1);
+        const slotH = H / (cellsY + 0.5);
+        const hexW = Math.max(1, slotW - margin);
+        const hexH = Math.max(1, slotH - margin);
         for (let row = 0; row < cellsY; row++) {
             for (let col = 0; col < cellsX; col++) {
-                const cx = col * hexW * 0.75 + hexW / 2;
-                const cy = (row + 0.5) * hexH + (col % 2 === 1 ? hexH * 0.5 : 0);
+                const cx = col * slotW * 0.75 + slotW / 2;
+                const cy = (row + 0.5) * slotH + (col % 2 === 1 ? slotH * 0.5 : 0);
                 cells.push({ cx, cy, w: hexW, h: hexH, x: cx - hexW / 2, y: cy - hexH / 2, isHex: true, hexOri: 'col' });
             }
         }
