@@ -26,7 +26,7 @@ function tile(shape) {
 }
 
 const NORMAL_MAP_FILTER = `
-<filter id="normalMapFilter" x="0" y="0" width="100%" height="100%" filterUnits="objectBoundingBox" color-interpolation-filters="linearRGB">
+<filter id="normalMapFilter" x="0" y="0" width="${W}" height="${H}" filterUnits="userSpaceOnUse" color-interpolation-filters="linearRGB">
     <feColorMatrix in="SourceGraphic" type="matrix" values="0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0 0 0 1 0" result="gray"/>
     <feConvolveMatrix in="gray" order="3" kernelMatrix="-1 0 1  -2 0 2  -1 0 1" divisor="4" bias="0.5" result="dx"/>
     <feConvolveMatrix in="gray" order="3" kernelMatrix="1 2 1  0 0 0  -1 -2 -1" divisor="4" bias="0.5" result="dy"/>
@@ -57,12 +57,7 @@ export function generatePattern(p) {
     ];
 
     const content = buildContent(p, seed);
-
-    if (p.renderMode === 'normal') {
-        parts.push(`<g filter="url(#normalMapFilter)">${content}</g>`);
-    } else {
-        parts.push(content);
-    }
+    parts.push(content);
 
     parts.push('</svg>');
     return { svg: parts.join(''), seed };
@@ -70,7 +65,8 @@ export function generatePattern(p) {
 
 function buildContent(p, _seed) {
     const { renderMode, palette, customColors, bgBrightness, matrix: m } = p;
-    const parts = [`<g clip-path="url(#canvasClip)">`];
+    const filterAttr = renderMode === 'normal' ? ' filter="url(#normalMapFilter)"' : '';
+    const parts = [`<g clip-path="url(#canvasClip)"${filterAttr}>`];
 
     // Background color
     let baseBg;
