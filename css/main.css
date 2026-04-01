@@ -379,44 +379,64 @@ button:active { opacity: 0.8; }
 }
 .action-row button { flex: 1; height: 32px; }
 
-/* ─── PNG export row ────────────────────────────────────────────────────────── */
-.png-row {
-    display: flex;
-    gap: 8px;
-    align-items: center;
+/* ─── PNG scale popup ───────────────────────────────────────────────────────── */
+.png-popup {
+    position: relative;
 }
 
-.png-row .btn-png { flex: 1; height: 32px; }
+.png-popup-inner {
+    background: var(--ob-panel);
+    border: 1px solid var(--ob-line-2);
+    border-radius: var(--ob-radius-shell);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
 
 .scale-group {
     display: flex;
-    background: var(--ob-panel-2);
-    border: 1px solid var(--ob-line);
-    border-radius: var(--ob-radius-control);
-    overflow: hidden;
-    flex-shrink: 0;
+    gap: 6px;
 }
 
 .scale-btn {
-    height: 32px;
-    width: 34px;
+    flex: 1;
+    height: 48px;
     padding: 0;
-    border: none;
-    border-radius: 0;
-    background: transparent;
+    border: 1px solid var(--ob-line);
+    border-radius: var(--ob-radius-control);
+    background: var(--ob-panel-2);
     color: var(--ob-muted);
-    font-size: 11px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
-    border-right: 1px solid var(--ob-line);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    line-height: 1;
 }
-.scale-btn:last-child { border-right: none; }
-.scale-btn:hover { background: var(--ob-hover); color: var(--ob-ink); }
+
+.scale-btn span {
+    font-size: 9px;
+    font-weight: 400;
+    color: var(--ob-muted);
+    opacity: 0.7;
+}
+
+.scale-btn:hover { background: var(--ob-hover); color: var(--ob-ink); border-color: var(--ob-line-2); }
+
 .scale-btn.active {
     background: var(--ob-blue);
     color: #fff;
+    border-color: var(--ob-blue);
 }
+.scale-btn.active span { color: rgba(255,255,255,0.75); opacity: 1; }
+
+.btn-png-confirm { width: 100%; height: 32px; }
 
 /* ─── Console panel ─────────────────────────────────────────────────────────── */
 .console-panel {

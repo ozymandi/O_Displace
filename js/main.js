@@ -19,6 +19,16 @@ document.querySelectorAll('.scale-btn').forEach(btn => {
     });
 });
 
+// PNG popup toggle
+const pngPopup = document.getElementById('pngPopup');
+document.getElementById('btnExportPNG').addEventListener('click', e => {
+    e.stopPropagation();
+    pngPopup.style.display = pngPopup.style.display === 'none' ? 'block' : 'none';
+});
+document.addEventListener('click', e => {
+    if (!pngPopup.contains(e.target)) pngPopup.style.display = 'none';
+});
+
 window.addEventListener('load', () => {
     log("O'Displace initialized.");
 
