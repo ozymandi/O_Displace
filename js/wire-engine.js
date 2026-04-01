@@ -127,8 +127,13 @@ function buildContent(p) {
                 dir = [Math.cos(a), Math.sin(a)];
             } else if (p.stepDirections === 'conical') {
                 const dx = ox - W / 2, dy = oy - H / 2;
-                const len = Math.sqrt(dx * dx + dy * dy) || 1;
-                dir = [dx / len, dy / len];
+                const len = Math.sqrt(dx * dx + dy * dy);
+                if (len < 1) {
+                    const a = random() * Math.PI * 2;
+                    dir = [Math.cos(a), Math.sin(a)];
+                } else {
+                    dir = [dx / len, dy / len];
+                }
             } else {
                 dir = dirPool[Math.floor(random() * dirPool.length)];
             }
@@ -146,12 +151,9 @@ function buildContent(p) {
                     const a = Math.atan2(dir[1], dir[0]) + (random() - 0.5) * 0.3;
                     dir = [Math.cos(a), Math.sin(a)];
                 } else if (p.stepDirections === 'conical') {
-                    const bdx = cx - W / 2, bdy = cy - H / 2;
-                    const blen = Math.sqrt(bdx * bdx + bdy * bdy) || 1;
-                    const base = [bdx / blen, bdy / blen];
-                    const angle = (random() - 0.5) * Math.PI * 0.5;
-                    const cos = Math.cos(angle), sin = Math.sin(angle);
-                    dir = [base[0] * cos - base[1] * sin, base[0] * sin + base[1] * cos];
+                    const drift = (random() - 0.5) * 0.45;
+                    const a = Math.atan2(dir[1], dir[0]) + drift;
+                    dir = [Math.cos(a), Math.sin(a)];
                 } else if (random() > 0.35) {
                     dir = dirPool[Math.floor(random() * dirPool.length)];
                 }
