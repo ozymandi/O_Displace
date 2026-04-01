@@ -155,8 +155,7 @@ function buildContent(p) {
 
                 // Update direction
                 if (p.stepDirections === 'burst') {
-                    // Keep going outward, tiny angle drift only
-                    const a = Math.atan2(dir[1], dir[0]) + (random() - 0.5) * 0.3;
+                    const a = Math.atan2(dir[1], dir[0]) + (random() - 0.5) * 0.45;
                     dir = [Math.cos(a), Math.sin(a)];
                 } else if (p.stepDirections === 'conical') {
                     // Stay same or turn ±45°
