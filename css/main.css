@@ -195,33 +195,61 @@ input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 input[type="number"] { -moz-appearance: textfield; }
 
-/* ─── Range sliders ─────────────────────────────────────────────────────────── */
+/* ─── Range sliders (O'Gravity style) ──────────────────────────────────────── */
 input[type="range"] {
     -webkit-appearance: none;
+    appearance: none;
     width: 100%;
+    height: 20px;
     background: transparent;
-}
-input[type="range"]:focus { outline: none; }
-input[type="range"]::-webkit-slider-runnable-track {
-    height: 3px;
-    background: var(--ob-line-2);
-    border-radius: 2px;
+    outline: none;
     cursor: pointer;
+    margin: 0;
 }
+
+input[type="range"]::-webkit-slider-runnable-track {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--slider-track-bg, #3a3a3a);
+}
+
 input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 13px;
-    height: 13px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    background: var(--ob-blue);
+    background: #ececec;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
     cursor: pointer;
-    margin-top: -5px;
-    transition: transform 0.1s, background 0.15s;
-    box-shadow: 0 0 6px rgba(24, 160, 251, 0.4);
+    transition: transform 0.1s, background 0.1s;
+    margin-top: -2px;
 }
-input[type="range"]::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-    background: var(--ob-blue-hover);
+
+input[type="range"]::-webkit-slider-thumb:active {
+    transform: scale(1.03);
+    background: #fff;
+}
+
+input[type="range"]::-moz-range-track {
+    height: 8px;
+    border-radius: 999px;
+    border: none;
+    background: var(--slider-track-bg, #3a3a3a);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    background: #ececec;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb:active {
+    transform: scale(1.03);
+    background: #fff;
 }
 
 /* ─── Checkbox ──────────────────────────────────────────────────────────────── */
