@@ -250,11 +250,16 @@ function renderCell(cell, p, bgColor, ctr) {
         }
     }
 
-    // Inner grid (rect cells only)
+    // Inner grid (rect cells only) — clipped to cell shape including rounded/chamfer corners
     if (!isHex && p.innerGridEnable && (p.innerGridX > 0 || p.innerGridY > 0)) {
         const igW = Math.max(0.3, vary(p.borderWidth * p.innerGridThickMult, p.innerGridThickRandom));
         const igOp = Math.min(1, Math.max(0, vary(p.innerGridOpacity, p.innerGridOpacityRandom)));
         const igColor = borderColor !== 'none' ? borderColor : (fillColor !== 'none' ? toGray(128) : toGray(128));
+        // Unique clip ID based on cell position (safe for seamless because clipPath coords
+        // are interpreted in the coordinate system of the referencing element)
+        const clipId = `ig_${Math.round(x * 10)}_${Math.round(y * 10)}`;
+        parts.push(`<defs><clipPath id="${clipId}"><path d="${pathD}"/></clipPath></defs>`);
+        parts.push(`<g clip-path="url(#${clipId})">`);
         for (let i = 1; i <= p.innerGridX; i++) {
             const lx = (x + w * i / (p.innerGridX + 1)).toFixed(2);
             parts.push(`<line x1="${lx}" y1="${y.toFixed(2)}" x2="${lx}" y2="${(y + h).toFixed(2)}" stroke="${igColor}" stroke-width="${igW.toFixed(2)}" opacity="${igOp.toFixed(3)}"/>`);
@@ -263,6 +268,7 @@ function renderCell(cell, p, bgColor, ctr) {
             const ly = (y + h * i / (p.innerGridY + 1)).toFixed(2);
             parts.push(`<line x1="${x.toFixed(2)}" y1="${ly}" x2="${(x + w).toFixed(2)}" y2="${ly}" stroke="${igColor}" stroke-width="${igW.toFixed(2)}" opacity="${igOp.toFixed(3)}"/>`);
         }
+        parts.push(`</g>`);
     }
 
     // Text
