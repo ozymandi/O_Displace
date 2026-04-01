@@ -566,3 +566,33 @@ button:active { opacity: 0.8; }
     gap: 8px;
 }
 .modal-actions button { flex: 1; height: 30px; }
+
+/* ─── Segment / mode button group ──────────────────────────────────────────── */
+.seg-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin: 2px 0 6px;
+}
+
+.seg-btn {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--ob-muted);
+    font-family: var(--ob-font);
+    font-size: 11px;
+    padding: 3px 7px 4px;
+    cursor: pointer;
+    border-radius: var(--ob-radius-control) var(--ob-radius-control) 0 0;
+    transition: color 0.12s, border-color 0.12s;
+    white-space: nowrap;
+}
+
+.seg-btn:hover { color: var(--ob-ink); }
+
+.seg-btn.active {
+    color: var(--ob-ink);
+    font-weight: 600;
+    border-bottom-color: var(--ob-blue);
+}
