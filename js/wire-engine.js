@@ -216,9 +216,7 @@ function buildContent(p) {
                 }
             }
 
-            const lastPt = pts[pts.length - 1].split(',');
-            const ex = parseFloat(lastPt[0]), ey = parseFloat(lastPt[1]);
-            const cap = p.lineCap !== 'none' ? drawEndCap(ex, ey, strokeColor, strokeWidth, p.lineCap, bgColor) : '';
+            const cap = p.lineCap !== 'none' ? drawEndCap(Math.round(ox), Math.round(oy), strokeColor, strokeWidth, p.lineCap, bgColor) : '';
             const baseShape = `<polyline points="${pts.join(' ')}" stroke="${strokeColor}" stroke-width="${strokeWidth}" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>${cap}`;
             const shape = symmetrize(baseShape, p.symmetry, p.radialSteps);
             parts.push(p.seamless ? tile(shape) : shape);
