@@ -3,6 +3,18 @@ import { getColor } from './palette.js';
 
 const W = 1024, H = 1024;
 
+const TILE_OFFSETS = [
+    [-W, -H], [0, -H], [W, -H],
+    [-W,  0],          [W,  0],
+    [-W,  H], [0,  H], [W,  H],
+];
+
+function tile(shape) {
+    return TILE_OFFSETS
+        .map(([dx, dy]) => `<g transform="translate(${dx},${dy})">${shape}</g>`)
+        .join('') + shape;
+}
+
 const NORMAL_MAP_FILTER = `
 <filter id="normalMapFilter" x="0" y="0" width="${W}" height="${H}" filterUnits="userSpaceOnUse" color-interpolation-filters="linearRGB">
     <feColorMatrix in="SourceGraphic" type="matrix" values="0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0.33 0.33 0.33 0 0  0 0 0 1 0" result="gray"/>
@@ -116,12 +128,16 @@ function computeCells(p) {
     const { gridType, cellsX, cellsY, margin } = p;
 
     if (gridType === 'grid' || gridType === 'brick-row' || gridType === 'brick-col') {
-        const cellW = (W - margin * (cellsX - 1)) / cellsX;
-        const cellH = (H - margin * (cellsY - 1)) / cellsY;
+        // Seamless: cells at col*W/cellsX so tile boundary gap == margin
+        // Non-seamless: cells fill canvas fully (last edge touches W)
+        const cellW = p.seamless ? W / cellsX - margin : (W - margin * (cellsX - 1)) / cellsX;
+        const cellH = p.seamless ? H / cellsY - margin : (H - margin * (cellsY - 1)) / cellsY;
+        const stepX = p.seamless ? W / cellsX : cellW + margin;
+        const stepY = p.seamless ? H / cellsY : cellH + margin;
         for (let row = 0; row < cellsY; row++) {
             for (let col = 0; col < cellsX; col++) {
-                let x = col * (cellW + margin);
-                let y = row * (cellH + margin);
+                let x = col * stepX;
+                let y = row * stepY;
                 if (gridType === 'brick-row' && row % 2 === 1) x += cellW / 2;
                 if (gridType === 'brick-col' && col % 2 === 1) y += cellH / 2;
                 cells.push({ x, y, w: cellW, h: cellH, cx: x + cellW / 2, cy: y + cellH / 2, isHex: false });
@@ -311,11 +327,14 @@ export function generateGridPattern(p) {
         `<rect width="${W}" height="${H}" fill="${bgColor}"/>`,
     ];
 
+    const cellParts = [];
     for (const cell of cells) {
         const result = renderCell(cell, p, bgColor, ctr);
         ctr = result.ctr;
-        if (result.svg) parts.push(result.svg);
+        if (result.svg) cellParts.push(result.svg);
     }
+    const cellsSvg = cellParts.join('');
+    parts.push(p.seamless ? tile(cellsSvg) : cellsSvg);
 
     parts.push('</g></svg>');
     return { svg: parts.join(''), seed };

@@ -35,6 +35,7 @@ export function collectGridParams(createNewSeed = false) {
 
     return {
         createNewSeed,
+        seamless:             checked('seamlessEnable'),
         renderMode:           document.getElementById('renderMode').value,
         palette:              document.getElementById('paletteSelect').value,
         customColors,
@@ -287,6 +288,7 @@ export function bindASEImport() {
 // --- Reset to defaults ---
 const DEFAULTS = {
     bgBrightness: 8,
+    seamlessEnable: false,
     renderMode: 'color',
     paletteSelect: 'grayscale',
     livePreview: true,
