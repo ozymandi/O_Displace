@@ -1,1046 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>O'Displace - Core UI</title>
-    <style>
-        :root {
-            --bg-color: #121214;
-            --panel-bg: #1c1c1f;
-            --module-bg: #232326;
-            --text-color: #e0e0e0;
-            --text-muted: #88888e;
-            --accent: #ff0055;
-            --accent-green: #00ff66;
-            --accent-blue: #00ccff;
-            --accent-purple: #9d00ff;
-            --border: #2c2c2e;
-            --border-hover: #44444a;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            gap: 20px;
-            height: 100vh;
-            box-sizing: border-box;
-            font-size: 13px;
-        }
-
-        .controls {
-            width: 420px;
-            background: var(--panel-bg);
-            padding: 24px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            overflow-y: auto;
-            border: 1px solid var(--border);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        ::-webkit-scrollbar {
-            width: 14px;
-            height: 14px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #3a3a3e;
-            border-radius: 8px;
-            border: 4px solid var(--panel-bg);
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #55555a;
-        }
-
-        .viewport {
-            flex-grow: 1;
-            background: #000;
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid var(--border);
-            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8);
-        }
-
-        svg.canvas-svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        select,
-        input[type="text"],
-        input[type="number"],
-        textarea {
-            background: #111112;
-            color: #fff;
-            border: 1px solid var(--border);
-            padding: 8px 10px;
-            border-radius: 6px;
-            font-family: inherit;
-            font-size: 13px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        select:focus,
-        input[type="text"]:focus,
-        input[type="number"]:focus,
-        textarea:focus {
-            border-color: var(--border-hover);
-        }
-
-        select {
-            width: 100%;
-            cursor: pointer;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2388888e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 16px;
-            padding-right: 32px;
-        }
-
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
-
-        input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        input[type="range"] {
-            -webkit-appearance: none;
-            width: 55%;
-            background: transparent;
-        }
-
-        input[type="range"]:focus {
-            outline: none;
-        }
-
-        input[type="range"]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 4px;
-            cursor: pointer;
-            background: #333336;
-            border-radius: 2px;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            height: 14px;
-            width: 14px;
-            border-radius: 50%;
-            background: var(--accent);
-            cursor: pointer;
-            -webkit-appearance: none;
-            margin-top: -5px;
-            box-shadow: 0 0 8px rgba(255, 0, 85, 0.5);
-            transition: transform 0.1s;
-        }
-
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-
-        .module-group {
-            background: var(--module-bg);
-            padding: 14px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            margin-bottom: 4px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .module-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-weight: 600;
-            font-size: 14px;
-            color: #fff;
-            letter-spacing: 0.3px;
-        }
-
-        .module-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .module-title svg {
-            width: 18px;
-            height: 18px;
-            fill: currentColor;
-            opacity: 0.9;
-        }
-
-        .row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .row label {
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .row input[type="number"],
-        .row input[type="text"] {
-            width: 60px;
-            text-align: center;
-        }
-
-        button {
-            background: #2a2a2e;
-            color: #fff;
-            border: 1px solid var(--border);
-            padding: 12px;
-            cursor: pointer;
-            border-radius: 6px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            font-family: inherit;
-        }
-
-        button:hover {
-            background: #35353a;
-            border-color: #555;
-        }
-
-        .btn-generate {
-            border-left: 4px solid var(--accent-green);
-        }
-
-        .btn-export {
-            border-left: 4px solid var(--accent);
-        }
-
-        .btn-ase {
-            border-left: 4px solid #ffaa00;
-            background: #2a2015;
-        }
-
-        .btn-icon {
-            background: var(--module-bg);
-            border: 1px solid var(--border);
-            color: #fff;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-        }
-
-        .btn-icon:hover {
-            background: #35353a;
-            border-color: #555;
-        }
-
-        .debugger-panel {
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        #fileLog {
-            height: 80px;
-            background: #0d0d0f;
-            color: #00ff66;
-            font-family: "SFMono-Regular", Consolas, monospace;
-            font-size: 11px;
-            border: 1px solid #222;
-        }
-
-        .seed-container {
-            background: var(--module-bg);
-            padding: 14px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        input[type="checkbox"] {
-            accent-color: var(--accent);
-            width: 16px;
-            height: 16px;
-            cursor: pointer;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            background: #1c1c1f;
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid #333;
-            width: 440px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-        }
-
-        .color-slots {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 5px;
-        }
-
-        .color-slot {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .color-slot input[type="color"] {
-            width: 64px;
-            height: 64px;
-            padding: 0;
-            border: 2px solid transparent;
-            cursor: pointer;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            transition: 0.2s;
-            -webkit-appearance: none;
-        }
-
-        .color-slot input[type="color"]::-webkit-color-swatch-wrapper {
-            padding: 0;
-        }
-
-        .color-slot input[type="color"]::-webkit-color-swatch {
-            border: none;
-            border-radius: 6px;
-        }
-
-        .color-slot input[type="color"]:hover {
-            border-color: #fff;
-            transform: translateY(-2px);
-        }
-
-        .color-slot .hex-input {
-            width: 60px;
-            background: #111;
-            color: #fff;
-            border: 1px solid #333;
-            padding: 4px;
-            font-family: monospace;
-            font-size: 11px;
-            text-align: center;
-            border-radius: 4px;
-        }
-    </style>
+    <title>O'Displace</title>
+    <link rel="stylesheet" href="css/main.css">
 </head>
-
 <body>
 
-    <div id="paletteModal" class="modal-overlay">
-        <div class="modal-content">
-            <div>
-                <h3 style="margin:0 0 6px 0; color: #fff; font-size: 18px;">Custom Palette Editor</h3>
-                <p style="margin:0; color:var(--text-muted);">Enable/Disable slots, paste RGB/HEX, or load an Adobe .ase
-                    file.</p>
+<!-- ─── Palette Modal ─────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="paletteModal">
+    <div class="modal-box">
+        <div class="modal-title">Custom Palette</div>
+
+        <div class="color-slots">
+            <div class="color-slot">
+                <input type="color" id="c0" value="#FF0055">
+                <input type="text"  id="h0" value="#FF0055" maxlength="7" class="hex-input">
+                <input type="checkbox" id="en0" checked title="Enable">
             </div>
-            <div class="color-slots">
-                <div class="color-slot">
-                    <input type="color" id="c0" value="#FF0055">
-                    <input type="text" id="h0" value="#FF0055" maxlength="7" class="hex-input">
-                    <input type="checkbox" id="en0" checked title="Enable/Disable">
-                </div>
-                <div class="color-slot">
-                    <input type="color" id="c1" value="#00FFCC">
-                    <input type="text" id="h1" value="#00FFCC" maxlength="7" class="hex-input">
-                    <input type="checkbox" id="en1" checked title="Enable/Disable">
-                </div>
-                <div class="color-slot">
-                    <input type="color" id="c2" value="#BC00DD">
-                    <input type="text" id="h2" value="#BC00DD" maxlength="7" class="hex-input">
-                    <input type="checkbox" id="en2" checked title="Enable/Disable">
-                </div>
-                <div class="color-slot">
-                    <input type="color" id="c3" value="#2B0F4C">
-                    <input type="text" id="h3" value="#2B0F4C" maxlength="7" class="hex-input">
-                    <input type="checkbox" id="en3" checked title="Enable/Disable">
-                </div>
-                <div class="color-slot">
-                    <input type="color" id="c4" value="#FFFFFF">
-                    <input type="text" id="h4" value="#FFFFFF" maxlength="7" class="hex-input">
-                    <input type="checkbox" id="en4" checked title="Enable/Disable">
-                </div>
+            <div class="color-slot">
+                <input type="color" id="c1" value="#00FFCC">
+                <input type="text"  id="h1" value="#00FFCC" maxlength="7" class="hex-input">
+                <input type="checkbox" id="en1" checked title="Enable">
             </div>
-            <textarea id="hexPaste" placeholder="Paste CSS, XML, HEX, or rgb() here..."></textarea>
-            <div style="display:flex; gap:12px;">
-                <input type="file" id="aseFile" accept=".ase" style="display:none;">
-                <button class="btn-ase" style="flex:1;" onclick="document.getElementById('aseFile').click()">Load .ase
-                    File</button>
-                <button class="btn-generate" style="flex:1;" onclick="closePaletteModal()">Apply & Close</button>
+            <div class="color-slot">
+                <input type="color" id="c2" value="#9D00FF">
+                <input type="text"  id="h2" value="#9D00FF" maxlength="7" class="hex-input">
+                <input type="checkbox" id="en2" checked title="Enable">
             </div>
+            <div class="color-slot">
+                <input type="color" id="c3" value="#2B0F4C">
+                <input type="text"  id="h3" value="#2B0F4C" maxlength="7" class="hex-input">
+                <input type="checkbox" id="en3" checked title="Enable">
+            </div>
+            <div class="color-slot">
+                <input type="color" id="c4" value="#FFFFFF">
+                <input type="text"  id="h4" value="#FFFFFF" maxlength="7" class="hex-input">
+                <input type="checkbox" id="en4" checked title="Enable">
+            </div>
+        </div>
+
+        <textarea class="modal-paste" id="hexPaste" placeholder="Paste CSS, XML, HEX, or rgb() here…"></textarea>
+
+        <div class="modal-actions">
+            <input type="file" id="aseFile" accept=".ase" style="display:none">
+            <button onclick="document.getElementById('aseFile').click()">Load .ase</button>
+            <button class="btn-generate" onclick="closePaletteModal()">Apply & Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- ─── Left Panel ───────────────────────────────────────────────────────── -->
+<div class="controls">
+    <div class="panel-title">O'Displace</div>
+
+    <!-- Seed -->
+    <div class="seed-row">
+        <label>Seed</label>
+        <input type="text" id="seedDisplay" readonly>
+        <div class="live-wrap">
+            <label for="livePreview">Live</label>
+            <input type="checkbox" id="livePreview" checked>
         </div>
     </div>
 
-    <div class="controls">
-        <h2 style="margin: 0 0 4px 0; font-size: 22px; color: #fff;">O'Displace</h2>
+    <!-- Render mode -->
+    <select id="renderMode" onchange="handleInput()">
+        <option value="color">Color (Albedo)</option>
+        <option value="depth">Depth Map (Height)</option>
+        <option value="normal">Normal Map</option>
+    </select>
 
-        <div class="seed-container">
-            <div class="row">
-                <label>Current Seed</label>
-                <input type="text" id="seedDisplay" readonly>
-            </div>
-            <div class="row">
-                <label>Live Preview</label>
-                <input type="checkbox" id="livePreview" checked>
-            </div>
-        </div>
+    <!-- Palette -->
+    <div class="select-row">
+        <select id="paletteSelect" onchange="handlePaletteChange()">
+            <option value="grayscale">Grayscale (Classic)</option>
+            <option value="custom">Custom (Paste / ASE)</option>
+            <option value="cyberpunk">Cyberpunk (Neon)</option>
+            <option value="mars">Mars Base (Orange/Red)</option>
+            <option value="ocean">Deep Ocean (Blues)</option>
+        </select>
+        <button id="editCustomBtn" class="btn-icon" onclick="openPaletteModal()" title="Edit palette" style="display:none">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+        </button>
+    </div>
 
-        <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
-            <select id="renderMode" onchange="handleInput()" style="flex: 1; border-color: var(--border-hover);">
-                <option value="color">Mode: Color (Albedo)</option>
-                <option value="depth">Mode: Depth Map (Height)</option>
-                <option value="normal">Mode: Normal Map</option>
-            </select>
-        </div>
-
-        <div style="display: flex; gap: 8px; align-items: center; width: 100%;">
-            <select id="paletteSelect" onchange="handlePaletteChange()" style="flex: 1;">
-                <option value="grayscale">Grayscale (Classic)</option>
-                <option value="custom">Custom (Paste / ASE)</option>
-                <option value="cyberpunk">Cyberpunk (Neon)</option>
-                <option value="mars">Mars Base (Orange/Red)</option>
-                <option value="ocean">Deep Ocean (Blues)</option>
-            </select>
-            <button id="editCustomBtn" class="btn-icon" onclick="openPaletteModal()" title="Edit Custom Palette"
-                style="display: none; padding: 7px 10px; margin: 0;">
-                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
-                    <circle cx="12" cy="12" r="3"></circle>
-                    <path
-                        d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
-                    </path>
-                </svg>
-            </button>
-        </div>
-
+    <!-- Iterations + Bg Brightness -->
+    <div class="module-group">
         <div class="row">
             <label>Iterations</label>
             <input type="number" id="globalIter" value="1500" onchange="handleInput()">
         </div>
         <div class="row">
-            <label>Bg Brightness (Color Mode)</label>
+            <label>Bg Brightness</label>
             <input type="range" id="bgBrightness" min="0" max="255" value="30" oninput="handleInput()">
-        </div>
-
-        <div class="module-group">
-            <div class="module-header">
-                <div class="module-title">
-                    <svg viewBox="0 0 24 24">
-                        <rect x="3" y="3" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" />
-                        <path d="M3 12h18M12 3v18" stroke="currentColor" stroke-width="2" />
-                    </svg>
-                    <span>Layer Matrix</span>
-                </div>
-                <input type="checkbox" id="matrixEnable" checked onchange="handleInput()">
-            </div>
-            <div class="row"><label>Grid Size (NxN)</label><input type="range" id="matrixSize" min="1" max="10"
-                    value="4" oninput="handleInput()"></div>
-            <div class="row"><label>Start Offset %</label><input type="range" id="matrixStart" min="-100" max="100"
-                    value="-50" oninput="handleInput()"></div>
-            <div class="row"><label>End Offset %</label><input type="range" id="matrixEnd" min="-100" max="100"
-                    value="50" oninput="handleInput()"></div>
-            <div class="row"><label>Random Factor %</label><input type="range" id="matrixRandom" min="0" max="100"
-                    value="15" oninput="handleInput()"></div>
-            <div class="row">
-                <label>Invert Direction</label>
-                <input type="checkbox" id="matrixInvert" onchange="handleInput()">
-            </div>
-        </div>
-
-        <div class="module-group">
-            <div class="module-header">
-                <div class="module-title">
-                    <svg viewBox="0 0 24 24">
-                        <rect x="4" y="4" width="16" height="16" />
-                    </svg>
-                    <span>Solid Blocks</span>
-                </div>
-                <input type="checkbox" id="solidEnable" checked onchange="handleInput()">
-            </div>
-            <div class="row"><label>Scale %</label><input type="range" id="solidScale" min="1" max="100" value="80"
-                    oninput="handleInput()"></div>
-        </div>
-
-        <div class="module-group">
-            <div class="module-header">
-                <div class="module-title">
-                    <svg viewBox="0 0 24 24">
-                        <rect x="4" y="4" width="16" height="16" fill-opacity="0.4" stroke="currentColor"
-                            stroke-width="2" />
-                    </svg>
-                    <span>Alpha Blocks</span>
-                </div>
-                <input type="checkbox" id="alphaEnable" checked onchange="handleInput()">
-            </div>
-            <div class="row"><label>Scale %</label><input type="range" id="alphaScale" min="1" max="100" value="100"
-                    oninput="handleInput()"></div>
-            <div class="row"><label>Opacity %</label><input type="range" id="alphaOpacity" min="10" max="100" value="50"
-                    oninput="handleInput()"></div>
-        </div>
-
-        <div class="module-group">
-            <div class="module-header">
-                <div class="module-title">
-                    <svg viewBox="0 0 24 24">
-                        <rect x="4" y="4" width="6" height="6" />
-                        <rect x="14" y="4" width="6" height="6" />
-                        <rect x="4" y="14" width="6" height="6" />
-                        <rect x="14" y="14" width="6" height="6" />
-                    </svg>
-                    <span>Grid Matrices</span>
-                </div>
-                <input type="checkbox" id="gridEnable" checked onchange="handleInput()">
-            </div>
-            <div class="row"><label>Scale %</label><input type="range" id="gridScale" min="1" max="100" value="40"
-                    oninput="handleInput()"></div>
-            <div class="row"><label>Spacing %</label><input type="range" id="gridSpacing" min="0" max="100" value="20"
-                    oninput="handleInput()"></div>
-            <div class="row"><label>Max Amount</label><input type="range" id="gridAmount" value="5" min="1" max="10"
-                    oninput="handleInput()"></div>
-        </div>
-
-        <div class="module-group">
-            <div class="module-header">
-                <div class="module-title">
-                    <svg viewBox="0 0 24 24">
-                        <rect x="5" y="4" width="3" height="16" />
-                        <rect x="11" y="4" width="3" height="16" />
-                        <rect x="17" y="4" width="2" height="16" />
-                    </svg>
-                    <span>Vertical Bars</span>
-                </div>
-                <input type="checkbox" id="vBarEnable" checked onchange="handleInput()">
-            </div>
-            <div class="row"><label>Scale %</label><input type="range" id="vBarScale" min="1" max="100" value="60"
-                    oninput="handleInput()"></div>
-            <div class="row"><label>Spacing %</label><input type="range" id="vBarSpacing" min="0" max="100" value="30"
-                    oninput="handleInput()"></div>
-            <div class="row"><label>Max Amount</label><input type="range" id="vBarAmount" value="6" min="1" max="20"
-                    oninput="handleInput()"></div>
-        </div>
-
-        <div class="module-group">
-            <div class="module-header">
-                <div class="module-title">
-                    <svg viewBox="0 0 24 24">
-                        <rect x="4" y="5" width="16" height="3" />
-                        <rect x="4" y="11" width="16" height="3" />
-                        <rect x="4" y="17" width="16" height="2" />
-                    </svg>
-                    <span>Horizontal Bars</span>
-                </div>
-                <input type="checkbox" id="hBarEnable" checked onchange="handleInput()">
-            </div>
-            <div class="row"><label>Scale %</label><input type="range" id="hBarScale" min="1" max="100" value="60"
-                    oninput="handleInput()"></div>
-            <div class="row"><label>Spacing %</label><input type="range" id="hBarSpacing" min="0" max="100" value="30"
-                    oninput="handleInput()"></div>
-            <div class="row"><label>Max Amount</label><input type="range" id="hBarAmount" value="6" min="1" max="20"
-                    oninput="handleInput()"></div>
-        </div>
-
-        <div class="module-group">
-            <div class="module-header">
-                <div class="module-title">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="2" />
-                    </svg>
-                    <span>Wires & Nodes</span>
-                </div>
-                <input type="checkbox" id="wireEnable" checked onchange="handleInput()">
-            </div>
-            <div class="row"><label>Line Width</label><input type="range" id="wireWidth" min="1" max="20" value="4"
-                    oninput="handleInput()"></div>
-            <div class="row"><label>Cross Prob. %</label><input type="range" id="crossProb" min="0" max="100" value="30"
-                    oninput="handleInput()"></div>
-            <div class="row"><label>Max Nodes</label><input type="range" id="nodeAmount" min="0" max="10" value="3"
-                    oninput="handleInput()"></div>
-            <div class="row"><label>Node Spacing</label><input type="range" id="nodeSpacing" min="5" max="30" value="10"
-                    oninput="handleInput()"></div>
-            <div class="row"><label>Random Center %</label><input type="range" id="wireCenter" min="0" max="100"
-                    value="30" oninput="handleInput()"></div>
-        </div>
-
-        <button class="btn-generate" onclick="generatePattern(true)">Generate New Seed</button>
-        <button class="btn-export" onclick="exportSVG()">Save SVG</button>
-
-        <div class="debugger-panel">
-            <label style="color: var(--text-muted);">Console Log</label>
-            <textarea id="fileLog" readonly></textarea>
         </div>
     </div>
 
-    <div class="viewport" id="svgContainer"></div>
+    <!-- Layer Matrix -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 12h18M12 3v18" stroke="currentColor" stroke-width="2"/></svg>
+                Layer Matrix
+            </div>
+            <input type="checkbox" id="matrixEnable" checked onchange="handleInput()">
+        </div>
+        <div class="row"><label>Grid Size (NxN)</label><input type="range" id="matrixSize"   min="1" max="10"   value="4"   oninput="handleInput()"></div>
+        <div class="row"><label>Start Offset %</label>  <input type="range" id="matrixStart"  min="-100" max="100" value="-50" oninput="handleInput()"></div>
+        <div class="row"><label>End Offset %</label>    <input type="range" id="matrixEnd"    min="-100" max="100" value="50"  oninput="handleInput()"></div>
+        <div class="row"><label>Random Factor %</label> <input type="range" id="matrixRandom" min="0" max="100"   value="15"  oninput="handleInput()"></div>
+        <div class="row">
+            <label>Invert Direction</label>
+            <input type="checkbox" id="matrixInvert" onchange="handleInput()">
+        </div>
+    </div>
 
-    <script>
-        // --- DEBUGGERS ---
-        function alertDebugger(msg) {
-            alert("[O'Displace ALERT]\n" + msg);
-            fileLogDebugger("ALERT: " + msg);
-        }
+    <!-- Solid Blocks -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/></svg>
+                Solid Blocks
+            </div>
+            <input type="checkbox" id="solidEnable" checked onchange="handleInput()">
+        </div>
+        <div class="row"><label>Scale %</label><input type="range" id="solidScale" min="1" max="100" value="80" oninput="handleInput()"></div>
+    </div>
 
-        function fileLogDebugger(msg) {
-            const log = document.getElementById('fileLog');
-            const time = new Date().toISOString().split('T')[1].slice(0, 8);
-            log.value += `[${time}] ${msg}\n`;
-            log.scrollTop = log.scrollHeight;
-        }
+    <!-- Alpha Blocks -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" fill-opacity="0.4" stroke="currentColor" stroke-width="2"/></svg>
+                Alpha Blocks
+            </div>
+            <input type="checkbox" id="alphaEnable" checked onchange="handleInput()">
+        </div>
+        <div class="row"><label>Scale %</label>  <input type="range" id="alphaScale"   min="1"  max="100" value="100" oninput="handleInput()"></div>
+        <div class="row"><label>Opacity %</label> <input type="range" id="alphaOpacity" min="10" max="100" value="50"  oninput="handleInput()"></div>
+    </div>
 
-        // --- PALETTE UI LOGIC ---
-        function handlePaletteChange() {
-            const isCustom = document.getElementById('paletteSelect').value === 'custom';
-            document.getElementById('editCustomBtn').style.display = isCustom ? 'flex' : 'none';
-            if (isCustom) openPaletteModal();
-            handleInput();
-        }
+    <!-- Grid Matrices -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg>
+                Grid Matrices
+            </div>
+            <input type="checkbox" id="gridEnable" checked onchange="handleInput()">
+        </div>
+        <div class="row"><label>Scale %</label>  <input type="range" id="gridScale"   min="1" max="100" value="40" oninput="handleInput()"></div>
+        <div class="row"><label>Spacing %</label> <input type="range" id="gridSpacing" min="0" max="100" value="20" oninput="handleInput()"></div>
+        <div class="row"><label>Max Amount</label><input type="range" id="gridAmount"  min="1" max="10"  value="5"  oninput="handleInput()"></div>
+    </div>
 
-        function openPaletteModal() { document.getElementById('paletteModal').style.display = 'flex'; }
-        function closePaletteModal() { document.getElementById('paletteModal').style.display = 'none'; handleInput(); }
+    <!-- Vertical Bars -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="5" y="4" width="3" height="16"/><rect x="11" y="4" width="3" height="16"/><rect x="17" y="4" width="2" height="16"/></svg>
+                Vertical Bars
+            </div>
+            <input type="checkbox" id="vBarEnable" checked onchange="handleInput()">
+        </div>
+        <div class="row"><label>Scale %</label>   <input type="range" id="vBarScale"   min="1" max="100" value="60" oninput="handleInput()"></div>
+        <div class="row"><label>Spacing %</label>  <input type="range" id="vBarSpacing" min="0" max="100" value="30" oninput="handleInput()"></div>
+        <div class="row"><label>Max Amount</label> <input type="range" id="vBarAmount"  min="1" max="20"  value="6"  oninput="handleInput()"></div>
+    </div>
 
-        for (let i = 0; i < 5; i++) {
-            const colorPicker = document.getElementById('c' + i);
-            const hexText = document.getElementById('h' + i);
-            colorPicker.addEventListener('input', function (e) { hexText.value = e.target.value.toUpperCase(); handleInput(); });
-            hexText.addEventListener('input', function (e) {
-                let val = e.target.value.trim();
-                if (!val.startsWith('#')) val = '#' + val;
-                if (/^#[0-9A-F]{6}$/i.test(val)) { colorPicker.value = val; handleInput(); }
-                else if (/^#[0-9A-F]{3}$/i.test(val)) {
-                    const fullHex = '#' + val[1] + val[1] + val[2] + val[2] + val[3] + val[3];
-                    colorPicker.value = fullHex; handleInput();
-                }
-            });
-        }
+    <!-- Horizontal Bars -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="3"/><rect x="4" y="11" width="16" height="3"/><rect x="4" y="17" width="16" height="2"/></svg>
+                Horizontal Bars
+            </div>
+            <input type="checkbox" id="hBarEnable" checked onchange="handleInput()">
+        </div>
+        <div class="row"><label>Scale %</label>   <input type="range" id="hBarScale"   min="1" max="100" value="60" oninput="handleInput()"></div>
+        <div class="row"><label>Spacing %</label>  <input type="range" id="hBarSpacing" min="0" max="100" value="30" oninput="handleInput()"></div>
+        <div class="row"><label>Max Amount</label> <input type="range" id="hBarAmount"  min="1" max="20"  value="6"  oninput="handleInput()"></div>
+    </div>
 
-        document.getElementById('hexPaste').addEventListener('input', function (e) {
-            const text = e.target.value;
-            const hexMatches = text.match(/#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})\b/g) || [];
-            const rgbMatches = text.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/g) || [];
-            const parsedRgbToHex = rgbMatches.map(str => {
-                const parts = str.match(/\d+/g);
-                const r = Math.min(255, parseInt(parts[0]));
-                const g = Math.min(255, parseInt(parts[1]));
-                const b = Math.min(255, parseInt(parts[2]));
-                return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
-            });
-            let allColors = [...hexMatches, ...parsedRgbToHex].map(hex => {
-                if (hex.length === 4) return '#' + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3];
-                return hex.toUpperCase();
-            });
-            if (allColors.length > 0) {
-                let limit = Math.min(allColors.length, 5);
-                for (let i = 0; i < limit; i++) {
-                    document.getElementById('c' + i).value = allColors[i];
-                    document.getElementById('h' + i).value = allColors[i];
-                    document.getElementById('en' + i).checked = true;
-                }
-                fileLogDebugger(`Smart Paste: Parsed ${limit} colors.`);
-            }
-        });
+    <!-- Wires & Nodes -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="2"/></svg>
+                Wires &amp; Nodes
+            </div>
+            <input type="checkbox" id="wireEnable" checked onchange="handleInput()">
+        </div>
+        <div class="row"><label>Line Width</label>      <input type="range" id="wireWidth"  min="1"  max="20" value="4"  oninput="handleInput()"></div>
+        <div class="row"><label>Cross Prob. %</label>   <input type="range" id="crossProb"  min="0"  max="100" value="30" oninput="handleInput()"></div>
+        <div class="row"><label>Max Nodes</label>       <input type="range" id="nodeAmount" min="0"  max="10" value="3"  oninput="handleInput()"></div>
+        <div class="row"><label>Node Spacing</label>    <input type="range" id="nodeSpacing" min="5" max="30" value="10" oninput="handleInput()"></div>
+        <div class="row"><label>Random Center %</label> <input type="range" id="wireCenter" min="0"  max="100" value="30" oninput="handleInput()"></div>
+    </div>
 
-        document.getElementById('aseFile').addEventListener('change', function (e) {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                try {
-                    const view = new DataView(event.target.result);
-                    let offset = 4 + 2 + 2;
-                    const numBlocks = view.getUint32(offset); offset += 4;
-                    const colors = [];
-                    for (let i = 0; i < numBlocks; i++) {
-                        if (offset >= view.byteLength) break;
-                        const type = view.getUint16(offset); offset += 2;
-                        const blockLen = view.getUint32(offset); offset += 4;
-                        if (type === 1) {
-                            const startOffset = offset;
-                            const nameLen = view.getUint16(offset); offset += 2 + (nameLen * 2);
-                            const modelStr = String.fromCharCode(view.getUint8(offset), view.getUint8(offset + 1), view.getUint8(offset + 2), view.getUint8(offset + 3)); offset += 4;
-                            let r = 0, g = 0, b = 0, valid = false;
-                            if (modelStr === 'RGB ') { r = view.getFloat32(offset) * 255; g = view.getFloat32(offset + 4) * 255; b = view.getFloat32(offset + 8) * 255; valid = true; }
-                            else if (modelStr === 'CMYK') { const c = view.getFloat32(offset); const m = view.getFloat32(offset + 4); const y = view.getFloat32(offset + 8); const k = view.getFloat32(offset + 12); r = 255 * (1 - c) * (1 - k); g = 255 * (1 - m) * (1 - k); b = 255 * (1 - y) * (1 - k); valid = true; }
-                            else if (modelStr === 'Gray') { const gray = view.getFloat32(offset) * 255; r = g = b = gray; valid = true; }
-                            if (valid) {
-                                r = Math.max(0, Math.min(255, Math.round(r))); g = Math.max(0, Math.min(255, Math.round(g))); b = Math.max(0, Math.min(255, Math.round(b)));
-                                colors.push('#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase());
-                            }
-                            offset = startOffset + blockLen;
-                        } else { offset += blockLen; }
-                    }
-                    if (colors.length > 0) {
-                        let limit = Math.min(colors.length, 5);
-                        for (let i = 0; i < 5; i++) {
-                            if (i < limit) { document.getElementById('c' + i).value = colors[i]; document.getElementById('h' + i).value = colors[i]; document.getElementById('en' + i).checked = true; }
-                            else { document.getElementById('en' + i).checked = false; }
-                        }
-                        fileLogDebugger(`ASE Parser: Loaded ${limit} colors.`);
-                    }
-                } catch (err) { alertDebugger("ASE parse error: " + err.message); }
-            };
-            reader.readAsArrayBuffer(file);
-        });
+    <!-- Actions -->
+    <div class="action-row">
+        <button class="btn-generate" onclick="generateNew()">Generate New Seed</button>
+        <button class="btn-export" id="btnExport">Save SVG</button>
+    </div>
 
-        // --- PRNG ---
-        let currentSeed = 987654321;
-        let prng = null;
-        function mulberry32(a) {
-            return function () {
-                var t = a += 0x6D2B79F5; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61);
-                return ((t ^ t >>> 14) >>> 0) / 4294967296;
-            }
-        }
-        function random() { if (!prng) prng = mulberry32(currentSeed); return prng(); }
+    <!-- Console -->
+    <div class="console-panel">
+        <label>Console</label>
+        <textarea id="consoleLog" readonly></textarea>
+    </div>
+</div>
 
-        // --- COLOR LOGIC ---
-        const palettes = {
-            cyberpunk: ['#2B0F4C', '#52057B', '#BC00DD', '#FF0055', '#00FFCC', '#FFFFFF'],
-            mars: ['#1A0808', '#3A120E', '#7C2A20', '#B85D33', '#E8A568', '#FCE2C2'],
-            ocean: ['#010B19', '#031C3A', '#05447A', '#0873B9', '#38BDF8', '#BAE6FD']
-        };
+<!-- ─── Viewport ──────────────────────────────────────────────────────────── -->
+<div class="viewport">
+    <div id="svgContainer" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"></div>
+</div>
 
-        function getGrayscaleHex() {
-            const val = Math.floor(random() * 255);
-            const hex = val.toString(16).padStart(2, '0').toUpperCase();
-            return `#${hex}${hex}${hex}`;
-        }
-
-        function getColor(paletteName) {
-            if (paletteName === 'grayscale') return getGrayscaleHex();
-            if (paletteName === 'custom') {
-                const customArr = [];
-                for (let i = 0; i < 5; i++) if (document.getElementById('en' + i).checked) customArr.push(document.getElementById('c' + i).value);
-                if (customArr.length === 0) return getGrayscaleHex();
-                return customArr[Math.floor(random() * customArr.length)];
-            }
-            const p = palettes[paletteName];
-            return p[Math.floor(random() * p.length)];
-        }
-
-        function adjustBrightness(hex, percent) {
-            hex = hex.replace(/^\s*#|\s*$/g, '');
-            if (hex.length === 3) hex = hex.replace(/(.)/g, '$1$1');
-            let r = parseInt(hex.substr(0, 2), 16); let g = parseInt(hex.substr(2, 2), 16); let b = parseInt(hex.substr(4, 2), 16);
-            let amount = Math.floor((percent / 100) * 255);
-            r = Math.max(0, Math.min(255, r + amount)); g = Math.max(0, Math.min(255, g + amount)); b = Math.max(0, Math.min(255, b + amount));
-            return `#${r.toString(16).padStart(2, '0').toUpperCase()}${g.toString(16).padStart(2, '0').toUpperCase()}${b.toString(16).padStart(2, '0').toUpperCase()}`;
-        }
-
-        function getVal(id) { return parseFloat(document.getElementById(id).value); }
-        function getChecked(id) { return document.getElementById(id).checked; }
-        function handleInput() { if (getChecked('livePreview')) generatePattern(false); }
-
-        // --- ENGINE ---
-        function generatePattern(createNewSeed = false) {
-            if (createNewSeed) {
-                currentSeed = Math.floor(Math.random() * 0xffffffff);
-                document.getElementById('seedDisplay').value = currentSeed;
-                fileLogDebugger("Generated new seed: " + currentSeed);
-            }
-            prng = mulberry32(currentSeed);
-
-            const container = document.getElementById('svgContainer');
-            const iterations = parseInt(getVal('globalIter'));
-            const palette = document.getElementById('paletteSelect').value;
-            const renderMode = document.getElementById('renderMode').value;
-
-            const mEnable = getChecked('matrixEnable');
-            const mSize = parseInt(getVal('matrixSize'));
-            const mStart = getVal('matrixStart');
-            const mEnd = getVal('matrixEnd');
-            const mInvert = getChecked('matrixInvert');
-            const mRandomFactor = getVal('matrixRandom');
-
-            if (isNaN(iterations) || iterations <= 0) { alertDebugger("Invalid iterations."); return; }
-
-            const width = 1024; const height = 1024;
-            let svg = `<svg class="canvas-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">`;
-
-            // Sharp Normal Map Filter (No blur)
-            svg += `<defs>
-                <clipPath id="canvasClip"><rect width="${width}" height="${height}" /></clipPath>
-                <filter id="normalMapFilter" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="linearRGB">
-                    <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.33 0.33 0.33 0 0" result="hMap" />
-                    <feConvolveMatrix in="hMap" order="3" kernelMatrix="-1 0 1  -2 0 2  -1 0 1" divisor="2" result="dx" preserveAlpha="true"/>
-                    <feConvolveMatrix in="hMap" order="3" kernelMatrix="-1 -2 -1  0 0 0  1 2 1" divisor="2" result="dy" preserveAlpha="true"/>
-                    <feColorMatrix in="dx" type="matrix" values="0 0 0 1 0.5  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="rChannel" />
-                    <feColorMatrix in="dy" type="matrix" values="0 0 0 0 0  0 0 0 1 0.5  0 0 0 0 0  0 0 0 0 1" result="gChannel" />
-                    <feComposite in="rChannel" in2="gChannel" operator="arithmetic" k2="1" k3="1" result="rgChannels" />
-                    <feColorMatrix in="rgChannels" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 0 0 1  0 0 0 1 0" />
-                </filter>
-            </defs>`;
-
-            let contentGroup = `<g clip-path="url(#canvasClip)">`;
-
-            let baseBgColor;
-            if (renderMode === 'depth' || renderMode === 'normal') baseBgColor = '#000000';
-            else {
-                const bgBright = getVal('bgBrightness');
-                const bgHex = Math.floor(bgBright).toString(16).padStart(2, '0').toUpperCase();
-                baseBgColor = palette === 'grayscale' ? `#${bgHex}${bgHex}${bgHex}` : getColor(palette);
-            }
-
-            // PRE-COMPUTE MATRIX OFFSETS WITH RANDOM FACTOR (Weighted Shuffle)
-            let matrixOffsets = [];
-            if (mEnable) {
-                let cells = [];
-                let totalCells = mSize * mSize;
-                for (let my = 0; my < mSize; my++) {
-                    matrixOffsets[my] = [];
-                    for (let mx = 0; mx < mSize; mx++) {
-                        let idx = my * mSize + mx;
-                        // Noise scales with totalCells so 100% can fully override the base index
-                        let noise = (random() * 2 - 1) * (mRandomFactor / 100) * (totalCells * 2);
-                        cells.push({ x: mx, y: my, sortKey: idx + noise });
-                    }
-                }
-
-                cells.sort((a, b) => a.sortKey - b.sortKey);
-
-                for (let i = 0; i < totalCells; i++) {
-                    let normalizedIndex = totalCells > 1 ? i / (totalCells - 1) : 0;
-                    if (mInvert) normalizedIndex = 1.0 - normalizedIndex;
-                    let offset = mStart + (normalizedIndex * (mEnd - mStart));
-                    matrixOffsets[cells[i].y][cells[i].x] = offset;
-                }
-            }
-
-            function getCellOffset(px, py) {
-                if (!mEnable) return 0;
-                let cx = Math.max(0, Math.min(width - 1, px)); let cy = Math.max(0, Math.min(height - 1, py));
-                let cellX = Math.floor(cx / (width / mSize)); let cellY = Math.floor(cy / (height / mSize));
-                return matrixOffsets[cellY][cellX];
-            }
-
-            if (mEnable) {
-                const cellW = width / mSize; const cellH = height / mSize;
-                for (let my = 0; my < mSize; my++) {
-                    for (let mx = 0; mx < mSize; mx++) {
-                        const px = mx * cellW + (cellW / 2); const py = my * cellH + (cellH / 2);
-                        const offset = getCellOffset(px, py);
-
-                        let adjustedBg;
-                        if (renderMode === 'color') {
-                            adjustedBg = adjustBrightness(baseBgColor, offset);
-                        } else {
-                            const v = Math.floor(64 + (offset / 100) * 64);
-                            const hex = Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0').toUpperCase();
-                            adjustedBg = `#${hex}${hex}${hex}`;
-                        }
-                        contentGroup += `<rect x="${mx * cellW}" y="${my * cellH}" width="${cellW + 1}" height="${cellH + 1}" fill="${adjustedBg}" />`;
-                    }
-                }
-            } else {
-                contentGroup += `<rect width="${width}" height="${height}" fill="${baseBgColor}" />`;
-            }
-
-            const gridSize = 10;
-            const activeModules = [];
-            if (getChecked('solidEnable')) activeModules.push(0);
-            if (getChecked('alphaEnable')) activeModules.push(1);
-            if (getChecked('gridEnable')) activeModules.push(2);
-            if (getChecked('vBarEnable')) activeModules.push(3);
-            if (getChecked('hBarEnable')) activeModules.push(4);
-            if (getChecked('wireEnable')) activeModules.push(5);
-
-            if (activeModules.length > 0) {
-                for (let i = 0; i < iterations; i++) {
-                    const x = Math.round((random() * width) / gridSize) * gridSize;
-                    const y = Math.round((random() * height) / gridSize) * gridSize;
-
-                    let color;
-                    let opacity = 1.0;
-
-                    if (renderMode === 'depth' || renderMode === 'normal') {
-                        let baseHeight = 20;
-                        let heightRange = 235;
-                        if (mEnable) {
-                            const offset = getCellOffset(x, y);
-                            baseHeight = Math.floor(64 + (offset / 100) * 64);
-                            heightRange = 127;
-                        }
-                        let v = Math.floor(baseHeight + (i / iterations) * heightRange);
-                        const hex = Math.max(0, Math.min(255, v)).toString(16).padStart(2, '0').toUpperCase();
-                        color = `#${hex}${hex}${hex}`;
-                    } else {
-                        color = getColor(palette);
-                        if (mEnable) color = adjustBrightness(color, getCellOffset(x, y));
-                    }
-
-                    const moduleType = activeModules[Math.floor(random() * activeModules.length)];
-
-                    switch (moduleType) {
-                        case 0:
-                            const sw = Math.round((random() * ((getVal('solidScale') / 100) * 300) + 20) / gridSize) * gridSize;
-                            const sh = Math.round((random() * ((getVal('solidScale') / 100) * 300) + 20) / gridSize) * gridSize;
-                            contentGroup += `<rect x="${x}" y="${y}" width="${sw}" height="${sh}" fill="${color}" />`;
-                            break;
-                        case 1:
-                            const aw = Math.round((random() * ((getVal('alphaScale') / 100) * 400) + 50) / gridSize) * gridSize;
-                            const ah = Math.round((random() * ((getVal('alphaScale') / 100) * 400) + 50) / gridSize) * gridSize;
-                            opacity = (renderMode === 'color') ? getVal('alphaOpacity') / 100 : 1.0;
-                            contentGroup += `<rect x="${x}" y="${y}" width="${aw}" height="${ah}" fill="${color}" fill-opacity="${opacity}" />`;
-                            break;
-                        case 2:
-                            const gAmount = Math.floor(random() * getVal('gridAmount')) + 1;
-                            const gSize = (getVal('gridScale') / 100) * 40;
-                            const step = gSize + ((getVal('gridSpacing') / 100) * 20);
-                            let gridGroup = `<g fill="${color}">`;
-                            for (let gx = 0; gx < gAmount; gx++) {
-                                for (let gy = 0; gy < gAmount; gy++) {
-                                    if (random() > 0.3) gridGroup += `<rect x="${x + (gx * step)}" y="${y + (gy * step)}" width="${gSize}" height="${gSize}" />`;
-                                }
-                            }
-                            contentGroup += gridGroup + `</g>`;
-                            break;
-                        case 3:
-                            const vbAmount = Math.floor(random() * getVal('vBarAmount')) + 2;
-                            const vbScale = (getVal('vBarScale') / 100) * 200;
-                            const vbGap = (getVal('vBarSpacing') / 100) * 15;
-                            let vBarGroup = `<g fill="${color}">`;
-                            let vPos = 0;
-                            for (let b = 0; b < vbAmount; b++) {
-                                const th = random() * 15 + 2;
-                                vBarGroup += `<rect x="${x + vPos}" y="${y}" width="${th}" height="${vbScale}" />`;
-                                vPos += th + vbGap;
-                            }
-                            contentGroup += vBarGroup + `</g>`;
-                            break;
-                        case 4:
-                            const hbAmount = Math.floor(random() * getVal('hBarAmount')) + 2;
-                            const hbScale = (getVal('hBarScale') / 100) * 200;
-                            const hbGap = (getVal('hBarSpacing') / 100) * 15;
-                            let hBarGroup = `<g fill="${color}">`;
-                            let hPos = 0;
-                            for (let b = 0; b < hbAmount; b++) {
-                                const th = random() * 15 + 2;
-                                hBarGroup += `<rect x="${x}" y="${y + hPos}" width="${hbScale}" height="${th}" />`;
-                                hPos += th + hbGap;
-                            }
-                            contentGroup += hBarGroup + `</g>`;
-                            break;
-                        case 5:
-                            const wW = getVal('wireWidth');
-                            const wL = random() * 500 + 100;
-                            const isCross = random() < (getVal('crossProb') / 100);
-                            const rcPct = getVal('wireCenter') / 100;
-                            const shiftH = (random() * 2 - 1) * (wL / 2) * rcPct;
-                            const shiftV = (random() * 2 - 1) * (wL / 2) * rcPct;
-
-                            const hX = x - wL / 2 + shiftH; const hY = y - wW / 2;
-                            const vX = x - wW / 2; const vY = y - wL / 2 + shiftV;
-
-                            let wGrp = `<g fill="${color}">`;
-
-                            if (isCross) {
-                                wGrp += `<rect x="${hX}" y="${hY}" width="${wL}" height="${wW}" />`;
-                                wGrp += `<rect x="${vX}" y="${vY}" width="${wW}" height="${wL}" />`;
-                                const maxN = parseInt(getVal('nodeAmount'));
-                                if (maxN > 0) {
-                                    wGrp += `<g fill="none" stroke="${color}" stroke-width="${wW}">`;
-                                    const nAmt = Math.floor(random() * maxN) + 1;
-                                    for (let n = 1; n <= nAmt; n++) {
-                                        const bS = wW + (n * parseInt(getVal('nodeSpacing')) * 2);
-                                        wGrp += `<rect x="${x - bS / 2}" y="${y - bS / 2}" width="${bS}" height="${bS}" />`;
-                                    }
-                                    wGrp += `</g>`;
-                                }
-                            } else {
-                                if (random() > 0.5) wGrp += `<rect x="${hX}" y="${hY}" width="${wL}" height="${wW}" />`;
-                                else wGrp += `<rect x="${vX}" y="${vY}" width="${wW}" height="${wL}" />`;
-                            }
-                            contentGroup += wGrp + `</g>`;
-                            break;
-                    }
-                }
-            } else {
-                if (createNewSeed) fileLogDebugger("Note: All modules disabled.");
-            }
-
-            contentGroup += `</g>`;
-
-            if (renderMode === 'normal') {
-                svg += `<g filter="url(#normalMapFilter)">${contentGroup}</g>`;
-            } else {
-                svg += contentGroup;
-            }
-
-            svg += `</svg>`;
-            container.innerHTML = svg;
-            if (createNewSeed && activeModules.length > 0) fileLogDebugger(`Generation complete (${renderMode.toUpperCase()}).`);
-        }
-
-        function exportSVG() {
-            const el = document.getElementById('svgContainer').querySelector('svg');
-            if (!el) return alertDebugger("No SVG to export.");
-            try {
-                const source = new XMLSerializer().serializeToString(el);
-                const blob = new Blob(['<?xml version="1.0" standalone="no"?>\r\n', source], { type: "image/svg+xml;charset=utf-8" });
-                const link = document.createElement("a");
-                link.href = URL.createObjectURL(blob);
-                link.download = `odisplace_export_${currentSeed}.svg`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                fileLogDebugger(`File saved: odisplace_export_${currentSeed}.svg`);
-            } catch (err) { alertDebugger("Export error: " + err.message); }
-        }
-
-        window.onload = () => {
-            fileLogDebugger("Core UI & PBR Render initialized.");
-            if (document.getElementById('paletteSelect').value === 'custom') {
-                document.getElementById('editCustomBtn').style.display = 'flex';
-            }
-            document.getElementById('seedDisplay').value = currentSeed;
-            generatePattern(false);
-        };
-    </script>
+<script type="module" src="js/main.js"></script>
 </body>
-
 </html>
