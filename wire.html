@@ -190,6 +190,13 @@
             <button class="seg-btn" data-value="cross">Cross</button>
             <button class="seg-btn" data-value="diamond">Diamond</button>
         </div>
+        <div class="row">
+            <label>Start</label>
+            <input type="checkbox" id="capStart" checked onchange="handleInput()">
+            <label style="margin-left:12px">End</label>
+            <input type="checkbox" id="capEnd" onchange="handleInput()">
+        </div>
+        <div class="row"><label>Random skip %</label><input type="range" id="capRandom" min="0" max="100" value="0" oninput="handleInput()"></div>
     </div>
 
     <!-- Symmetry -->
