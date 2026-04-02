@@ -334,7 +334,8 @@ function renderCell(cell, p, bgColor, ctr) {
             : fillColor !== 'none' ? (p.renderMode !== 'color' ? toGray(255 - parseInt(hexToGray(fillColor).substr(1, 2), 16)) : bgColor)
             : (p.renderMode !== 'color' ? toGray(200) : '#FFFFFF');
 
-        const textPad = p.textMargin;
+        const textPad      = p.textMargin;        // padding inside the label rect
+        const cellMargin   = p.textCellMargin ?? textPad; // offset from cell edge for anchored positions
         const lineHeight = p.textLineHeight ?? 1.35;
         // Font size: constrained so all lines + spacing fit in cell height
         const maxFontH = h / (lines.length * lineHeight);
@@ -349,13 +350,14 @@ function renderCell(cell, p, bgColor, ctr) {
         const hPart = anchor[1] || 'c';
         const vPart = anchor[0];
 
-        const textX = hPart === 'l' ? x + textPad : hPart === 'r' ? x + w - textPad : cx;
+        // textX / svgAnchor: cellMargin keeps text away from cell edge
+        const textX = hPart === 'l' ? x + cellMargin + textPad : hPart === 'r' ? x + w - cellMargin - textPad : cx;
         const svgAnchor = hPart === 'l' ? 'start' : hPart === 'r' ? 'end' : 'middle';
 
         // baseY = first line's baseline; visual block is centred/anchored correctly
         let baseY;
-        if (vPart === 't') baseY = y + textPad + fontSize * 0.75;
-        else if (vPart === 'b') baseY = y + h - textPad - contentH + fontSize * 0.75;
+        if (vPart === 't') baseY = y + cellMargin + textPad + fontSize * 0.75;
+        else if (vPart === 'b') baseY = y + h - cellMargin - textPad - contentH + fontSize * 0.75;
         else baseY = cy - contentH / 2 + fontSize * 0.75;
 
         // Rect tightly wraps visual text + textPad on all sides
