@@ -334,41 +334,47 @@ function renderCell(cell, p, bgColor, ctr) {
             : fillColor !== 'none' ? (p.renderMode !== 'color' ? toGray(255 - parseInt(hexToGray(fillColor).substr(1, 2), 16)) : bgColor)
             : (p.renderMode !== 'color' ? toGray(200) : '#FFFFFF');
 
-        const margin = p.textMargin;
-        const maxFontH = h / (lines.length * 1.35);
+        const textPad = p.textMargin;
+        const lineHeight = p.textLineHeight ?? 1.35;
+        // Font size: constrained so all lines + spacing fit in cell height
+        const maxFontH = h / (lines.length * lineHeight);
         const maxFontW = w / Math.max(1, ...lines.map(l => l.length)) / 0.6;
         const fontSize = Math.max(4, Math.min(maxFontH, maxFontW, w * 0.9)) * (p.textFontSize ?? 1);
-        const lineH = fontSize * (p.textLineHeight ?? 1.35);
-        const totalH = lines.length * lineH;
+        const lineH = fontSize * lineHeight;
+        // Visual block height: from cap-top of first line to baseline of last line
+        // (cap ≈ 0.75*fontSize above baseline; descenders ≈ 0.25*fontSize below baseline)
+        const contentH = (lines.length - 1) * lineH + fontSize;
 
         const anchor = p.textAnchor; // 'tl','tc','tr','ml','mc','mr','bl','bc','br'
         const hPart = anchor[1] || 'c';
         const vPart = anchor[0];
 
-        const textX = hPart === 'l' ? x + margin : hPart === 'r' ? x + w - margin : cx;
+        const textX = hPart === 'l' ? x + textPad : hPart === 'r' ? x + w - textPad : cx;
         const svgAnchor = hPart === 'l' ? 'start' : hPart === 'r' ? 'end' : 'middle';
 
+        // baseY = first line's baseline; visual block is centred/anchored correctly
         let baseY;
-        if (vPart === 't') baseY = y + margin + fontSize;
-        else if (vPart === 'b') baseY = y + h - margin - totalH + fontSize;
-        else baseY = cy - totalH / 2 + fontSize;
+        if (vPart === 't') baseY = y + textPad + fontSize * 0.75;
+        else if (vPart === 'b') baseY = y + h - textPad - contentH + fontSize * 0.75;
+        else baseY = cy - contentH / 2 + fontSize * 0.75;
+
+        // Rect tightly wraps visual text + textPad on all sides
+        const maxLineChars = Math.max(...lines.map(l => l.length));
+        const rectW = maxLineChars * fontSize * 0.6 + textPad * 2;
+        const rectH = contentH + textPad * 2;
+        const rectTop  = baseY - fontSize * 0.75 - textPad;
+        const rectLeft = svgAnchor === 'start' ? textX - textPad
+                       : svgAnchor === 'end'   ? textX - rectW + textPad
+                       :                         textX - rectW / 2;
 
         // Background rect
         if (p.textBgEnable && fillColor !== 'none') {
-            const estW = Math.max(...lines.map(l => l.length)) * fontSize * 0.6 + margin;
-            const estH = totalH + 2;
-            const bx = svgAnchor === 'start' ? textX - 2 : svgAnchor === 'end' ? textX - estW + 2 : textX - estW / 2;
-            const by = baseY - fontSize - 1;
-            parts.push(`<rect x="${bx.toFixed(2)}" y="${by.toFixed(2)}" width="${estW.toFixed(2)}" height="${estH.toFixed(2)}" fill="${fillColor}"/>`);
+            parts.push(`<rect x="${rectLeft.toFixed(2)}" y="${rectTop.toFixed(2)}" width="${rectW.toFixed(2)}" height="${rectH.toFixed(2)}" fill="${fillColor}"/>`);
         }
 
         // Border rect
         if (p.textBorderEnable && borderColor !== 'none') {
-            const estW = Math.max(...lines.map(l => l.length)) * fontSize * 0.6 + margin;
-            const estH = totalH + 2;
-            const bx = svgAnchor === 'start' ? textX - 2 : svgAnchor === 'end' ? textX - estW + 2 : textX - estW / 2;
-            const by = baseY - fontSize - 1;
-            parts.push(`<rect x="${bx.toFixed(2)}" y="${by.toFixed(2)}" width="${estW.toFixed(2)}" height="${estH.toFixed(2)}" fill="none" stroke="${borderColor}" stroke-width="0.5"/>`);
+            parts.push(`<rect x="${rectLeft.toFixed(2)}" y="${rectTop.toFixed(2)}" width="${rectW.toFixed(2)}" height="${rectH.toFixed(2)}" fill="none" stroke="${borderColor}" stroke-width="0.5"/>`);
         }
 
         for (let i = 0; i < lines.length; i++) {
