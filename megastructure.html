@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Megastructure — O'Gen</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ─── Left Panel ───────────────────────────────────────────────────────── -->
+<div class="controls">
+    <div class="panel-title">
+        <a href="index.html" class="back-btn">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </a>
+        Megastructure
+    </div>
+
+    <!-- Seed -->
+    <div class="seed-row">
+        <label>Seed</label>
+        <input type="text" id="seedDisplay" readonly>
+        <button class="btn-generate" onclick="generateNew()" style="flex-shrink:0;height:26px;padding:0 10px;">New Seed</button>
+        <button class="btn-reset" onclick="resetDefaults()" title="Reset all settings to defaults" style="height:26px;width:26px;font-size:14px;">↺</button>
+    </div>
+
+    <!-- ─── Appearance ─────────────────────────────────────────────────────── -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 3v18M3 12h18" stroke="currentColor" stroke-width="1.5"/></svg>
+                Appearance
+            </div>
+        </div>
+        <select id="renderMode" onchange="handleInput()">
+            <option value="color">Color (Albedo)</option>
+            <option value="depth">Depth Map (Height)</option>
+            <option value="normal">Normal Map</option>
+        </select>
+        <div class="row">
+            <label>Bg Brightness</label>
+            <input type="range" id="bgBrightness" min="0" max="255" value="18" oninput="handleInput()">
+        </div>
+        <div class="row">
+            <label>Block color</label>
+            <input type="color" id="blockColor" value="#7a8a99" oninput="handleInput()">
+        </div>
+    </div>
+
+    <!-- ─── Layout ─────────────────────────────────────────────────────────── -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="18" stroke="currentColor" stroke-width="2" fill="none"/><rect x="13" y="3" width="8" height="18" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                Layout
+            </div>
+        </div>
+        <div class="row">
+            <label>Ratio H↔V</label>
+            <input type="range" id="ratio" min="0" max="1" step="0.01" value="0.8" oninput="handleInput()">
+        </div>
+        <div class="row">
+            <label>Blocks</label>
+            <input type="range" id="blockCount" min="3" max="9" step="1" value="5" oninput="handleInput()">
+        </div>
+        <div class="row"><label>Anchor</label></div>
+        <div class="seg-group" data-param="anchor">
+            <button class="seg-btn active" data-value="both">Full</button>
+            <button class="seg-btn" data-value="start">Top</button>
+            <button class="seg-btn" data-value="end">Bottom</button>
+            <button class="seg-btn" data-value="free">Free</button>
+        </div>
+    </div>
+
+    <!-- ─── Block ──────────────────────────────────────────────────────────── -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="1" stroke="currentColor" stroke-width="2" fill="none"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18" stroke="currentColor" stroke-width="1" opacity=".5"/></svg>
+                Block
+            </div>
+        </div>
+        <div class="row">
+            <label>Variation</label>
+            <input type="range" id="variation" min="0" max="1" step="0.01" value="0.35" oninput="handleInput()">
+        </div>
+        <div class="row">
+            <label>Overhang</label>
+            <input type="range" id="overhang" min="0" max="1" step="0.01" value="0.25" oninput="handleInput()">
+        </div>
+        <div class="row">
+            <label>Gap</label>
+            <input type="range" id="margin" min="0" max="60" step="1" value="12" oninput="handleInput()">
+        </div>
+    </div>
+
+    <!-- ─── Detail ─────────────────────────────────────────────────────────── -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></svg>
+                Detail
+            </div>
+        </div>
+        <div class="row">
+            <label>Precision</label>
+            <input type="range" id="precision" min="0" max="1" step="0.01" value="0.5" oninput="handleInput()">
+        </div>
+        <div class="row">
+            <label>Depth</label>
+            <input type="range" id="detailDepth" min="0" max="1" step="0.01" value="0.5" oninput="handleInput()">
+        </div>
+        <div class="row">
+            <label>Smoothness</label>
+            <input type="range" id="smoothness" min="0" max="1" step="0.01" value="0.2" oninput="handleInput()">
+        </div>
+    </div>
+
+    <!-- ─── Layers ─────────────────────────────────────────────────────────── -->
+    <div class="module-group">
+        <div class="module-header">
+            <div class="module-title">
+                <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="currentColor" stroke-width="2" fill="none"/><path d="M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none"/><path d="M2 17l10 5 10-5" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                Layers
+            </div>
+        </div>
+        <div class="row">
+            <label>Layers</label>
+            <input type="range" id="layerCount" min="1" max="4" step="1" value="2" oninput="handleInput()">
+        </div>
+        <div class="row"><label>Shading</label></div>
+        <div class="seg-group" data-param="layerShading">
+            <button class="seg-btn active" data-value="sub">Sub</button>
+            <button class="seg-btn" data-value="add">Add</button>
+        </div>
+        <div class="row"><label>Gap mode</label></div>
+        <div class="seg-group" data-param="gapMode">
+            <button class="seg-btn" data-value="none">None</button>
+            <button class="seg-btn active" data-value="uniform">Uniform</button>
+            <button class="seg-btn" data-value="radial">Radial</button>
+            <button class="seg-btn" data-value="sin">Sin</button>
+            <button class="seg-btn" data-value="edges">Edges</button>
+        </div>
+        <div class="row">
+            <label>Gap amount</label>
+            <input type="range" id="gapAmount" min="0" max="1" step="0.01" value="0.4" oninput="handleInput()">
+        </div>
+        <div class="row">
+            <label>Gap random</label>
+            <input type="range" id="gapRandomness" min="0" max="1" step="0.01" value="0.5" oninput="handleInput()">
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions-grid">
+        <button class="btn-generate" onclick="generateNew()">Generate New Seed</button>
+        <button class="btn-reset" onclick="resetDefaults()" title="Reset all settings to defaults">↺</button>
+        <button class="btn-export" id="btnExportSVG">Save SVG</button>
+        <button class="btn-png" id="btnExportPNG">Save PNG</button>
+    </div>
+
+    <!-- PNG scale popup -->
+    <div id="pngPopup" class="png-popup" style="display:none;">
+        <div class="png-popup-inner">
+            <div class="scale-group">
+                <button class="scale-btn active" data-scale="1">1×<span>1024px</span></button>
+                <button class="scale-btn" data-scale="2">2×<span>2048px</span></button>
+                <button class="scale-btn" data-scale="3">3×<span>3072px</span></button>
+                <button class="scale-btn" data-scale="4">4×<span>4096px</span></button>
+            </div>
+            <input type="hidden" id="pngScale" value="1">
+            <button class="btn-png btn-png-confirm" id="btnPngConfirm">Export PNG</button>
+        </div>
+    </div>
+
+    <!-- Console -->
+    <div class="console-panel">
+        <label>Console</label>
+        <textarea id="consoleLog" readonly></textarea>
+    </div>
+</div>
+
+<!-- ─── Viewport ──────────────────────────────────────────────────────────── -->
+<div class="viewport">
+    <div id="svgContainer" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"></div>
+</div>
+
+<script type="module" src="js/mega-main.js"></script>
+</body>
+</html>
